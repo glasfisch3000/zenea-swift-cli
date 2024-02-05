@@ -5,17 +5,22 @@ import PackageDescription
 
 let package = Package(
     name: "zenea-swift-cli",
+    platforms: [
+       .macOS("13.3")
+    ],
     dependencies: [
         .package(url: "https://github.com/apple/swift-argument-parser.git", from: "1.2.0"),
+        .package(url: "https://github.com/swift-server/async-http-client.git", from: "1.9.0"),
+        .package(url: "https://github.com/glasfisch3000/zenea-swift.git", branch: "main")
     ],
     targets: [
-        // Targets are the basic building blocks of a package, defining a module or a test suite.
-        // Targets can depend on other targets in this package and products from dependencies.
         .executableTarget(
-            name: "zenea-swift-cli",
+            name: "zenea-cli",
             dependencies: [
                 .product(name: "ArgumentParser", package: "swift-argument-parser"),
+                .product(name: "AsyncHTTPClient", package: "async-http-client"),
+                .product(name: "zenea", package: "zenea-swift")
             ]
-        ),
+        )
     ]
 )
