@@ -12,7 +12,7 @@ let package = Package(
         .package(url: "https://github.com/apple/swift-argument-parser.git", from: "1.2.0"),
         .package(url: "https://github.com/swift-server/async-http-client.git", from: "1.9.0"),
         .package(url: "https://github.com/apple/swift-nio.git", from: "2.63.0"),
-        .package(url: "https://github.com/glasfisch3000/zenea-swift.git", from: "1.0.0-alpha5")
+        .package(url: "https://github.com/glasfisch3000/zenea-swift.git", branch: "main")
     ],
     targets: [
         .executableTarget(
