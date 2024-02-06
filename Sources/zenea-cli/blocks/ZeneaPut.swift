@@ -3,8 +3,6 @@ import Foundation
 import AsyncHTTPClient
 
 import zenea
-import zenea_fs
-import zenea_http
 
 public struct ZeneaPut: AsyncParsableCommand {
     public init() {}
