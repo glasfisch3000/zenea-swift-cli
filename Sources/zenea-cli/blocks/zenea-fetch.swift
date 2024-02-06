@@ -13,7 +13,7 @@ public struct ZeneaFetch: AsyncParsableCommand {
     public static var configuration: CommandConfiguration = .init(commandName: "fetch", abstract: "A Tool for fetching Zenea Project Data Layer blocks.", usage: "", discussion: "", version: "", shouldDisplay: true, subcommands: [], defaultSubcommand: nil, helpNames: nil)
     
     @Option(name: .shortAndLong) public var format: Block.DataFormat = .raw
-    @Flag(name: [.customShort("s"), .customLong("source")]) public var printSource = false
+    @Flag(name: [.customShort("s"), .customLong("print-source")]) public var printSource = false
     
     @ArgumentParser.Argument public var blockID: Block.ID
     
