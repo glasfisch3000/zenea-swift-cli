@@ -6,8 +6,6 @@ import zenea
 import zenea_fs
 import zenea_http
 
-extension ZeneaHTTPClient.Scheme: Codable { }
-
 fileprivate enum Source: Codable {
     case file(path: String)
     case http(scheme: ZeneaHTTPClient.Scheme, domain: String, port: Int)
