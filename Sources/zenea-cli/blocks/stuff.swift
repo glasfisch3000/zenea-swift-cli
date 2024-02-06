@@ -1,4 +1,6 @@
 import ArgumentParser
+import Foundation
+
 import zenea
 
 extension Block {
@@ -17,6 +19,20 @@ extension Block {
             return self.content.toHexString()
         case .base64:
             return self.content.base64EncodedString()
+        }
+    }
+    
+    public init?(decoding string: String, as format: Block.DataFormat) {
+        switch format {
+        case .raw:
+            guard let data = string.data(using: .utf8) else { return nil }
+            self.init(content: data)
+        case .hex:
+            guard let data = Data(hexString: string) else { return nil }
+            self.init(content: data)
+        case .base64:
+            guard let data = Data(base64Encoded: string) else { return nil }
+            self.init(content: data)
         }
     }
 }
