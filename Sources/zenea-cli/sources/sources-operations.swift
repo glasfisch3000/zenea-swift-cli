@@ -1,31 +1,10 @@
 import Foundation
-import AsyncHTTPClient
 import NIOFileSystem
+import AsyncHTTPClient
 
 import zenea
 import zenea_fs
 import zenea_http
-
-public enum BlockSource: Codable {
-    case file(path: String)
-    case http(scheme: ZeneaHTTPClient.Scheme, domain: String, port: Int)
-}
-
-public enum LoadSourcesError: Error, CustomStringConvertible {
-    case missing
-    case unableToRead
-    case corrupt
-    case unknown
-    
-    public var description: String {
-        switch self {
-        case .missing: "Unable to locate sources config file."
-        case .unableToRead: "Unable to open sources config file."
-        case .corrupt: "Unable to parse sources config file."
-        case .unknown: "Unknown error while reading sources config file."
-        }
-    }
-}
 
 public func listSources() async -> Result<[BlockSource], LoadSourcesError> {
     do {
@@ -62,22 +41,6 @@ public func loadSources(client: HTTPClient) async -> Result<[BlockStorage], Load
             }
         })
     case .failure(let error): return .failure(error)
-    }
-}
-
-public enum WriteSourcesError: Error, CustomStringConvertible {
-    case exists
-    case corrupt
-    case unableToWrite
-    case unknown
-    
-    public var description: String {
-        switch self {
-        case .exists: "Unable to write sources config file: File exists."
-        case .corrupt: "Unable to write sources config file: Corrupt data."
-        case .unableToWrite: "Unable to open sources config file."
-        case .unknown: "Unknown error while writing sources config file."
-        }
     }
 }
 
