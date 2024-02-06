@@ -30,6 +30,16 @@ public enum WriteSourcesError: Error, CustomStringConvertible {
     }
 }
 
+public enum AddSourcesError: Error, CustomStringConvertible {
+    case exists
+    
+    public var description: String {
+        switch self {
+        case .exists: "Specified source already exists."
+        }
+    }
+}
+
 public enum RemoveSourcesError: Error, CustomStringConvertible {
     case notFound
     
@@ -39,3 +49,4 @@ public enum RemoveSourcesError: Error, CustomStringConvertible {
         }
     }
 }
+

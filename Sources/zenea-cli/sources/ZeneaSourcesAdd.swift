@@ -15,6 +15,7 @@ public struct ZeneaSourcesAdd: AsyncParsableCommand {
             sources = []
         }
         
+        if sources.contains(where: { $0 == source }) { throw AddSourcesError.exists }
         sources.append(source)
         
         try await writeSources(sources, replace: true).get()
