@@ -23,9 +23,11 @@ NOTE: This package may not work on systems that do not provide an adequate `Foun
 - show help information about a subcommand: `zenea help <subcommand>`
 
 ### Blocks
+Blocks can be encoded or decoded in one of three formats: `raw`, `hex` and `base64`. The default value is `raw`.
+
 - list blocks available for download: `zenea list`
-- download a block: `zenea fetch <block-id>`
-- upload a block: `zenea put <block-content>`
+- download a block: `zenea fetch [-f <format>] <block-id>`
+- upload a block: `zenea put [-f <format>] <block-content>`
 
 ### Block Sources
 - list available block sources: `zenea sources list`
