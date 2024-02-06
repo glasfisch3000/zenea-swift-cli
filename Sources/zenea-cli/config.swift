@@ -6,7 +6,7 @@ import zenea
 import zenea_fs
 import zenea_http
 
-fileprivate enum Source: Codable {
+public enum BlockSource: Codable {
     case file(path: String)
     case http(scheme: ZeneaHTTPClient.Scheme, domain: String, port: Int)
 }
@@ -27,28 +27,17 @@ public enum LoadSourcesError: Error, CustomStringConvertible {
     }
 }
 
-public func loadSources(client: HTTPClient) async -> Result<[BlockStorage], LoadSourcesError> {
-    var results: [BlockStorage] = []
-    
+public func listSources() async -> Result<[BlockSource], LoadSourcesError> {
     do {
         let handle = try await FileSystem.shared.openFile(forReadingAt: zeneaFiles.config.sources)
         defer { Task { try? await handle.close() } }
         
         let buffer = try await handle.readToEnd(maximumSizeAllowed: .megabytes(42))
-        let sources = try? JSONDecoder().decode([Source].self, from: buffer)
+        let sources = try? JSONDecoder().decode([BlockSource].self, from: buffer)
         
         guard let sources = sources else { return .failure(.corrupt) }
         
-        for source in sources {
-            switch source {
-            case .file(path: let path):
-                results.append(BlockFS(path))
-            case .http(scheme: let scheme, domain: let domain, port: let port):
-                results.append(ZeneaHTTPClient(scheme: scheme, address: domain, port: port, client: client))
-            }
-        }
-        
-        return .success(results)
+        return .success(sources)
     } catch let error as FileSystemError {
         switch error.code {
         case .notFound: return .failure(.missing)
@@ -58,6 +47,21 @@ public func loadSources(client: HTTPClient) async -> Result<[BlockStorage], Load
         return .failure(.corrupt)
     } catch {
         return .failure(.unknown)
+    }
+}
+
+public func loadSources(client: HTTPClient) async -> Result<[BlockStorage], LoadSourcesError> {
+    switch await listSources() {
+    case .success(let sources):
+        return .success(sources.map { source in
+            switch source {
+            case .file(path: let path):
+                BlockFS(path)
+            case .http(scheme: let scheme, domain: let domain, port: let port):
+                ZeneaHTTPClient(scheme: scheme, address: domain, port: port, client: client)
+            }
+        })
+    case .failure(let error): return .failure(error)
     }
 }
 
@@ -78,7 +82,7 @@ public enum WriteSourcesError: Error, CustomStringConvertible {
 }
 
 func writeSources(_ stores: [BlockStorage], replace: Bool = true) async -> Result<Void, WriteSourcesError> {
-    let sources = stores.compactMap { storage -> Source? in
+    let sources = stores.compactMap { storage -> BlockSource? in
         switch storage {
         case let fs as BlockFS: return .file(path: fs.zeneaURL.string)
         case let http as ZeneaHTTPClient: return .http(scheme: http.server.scheme, domain: http.server.address, port: http.server.port)
