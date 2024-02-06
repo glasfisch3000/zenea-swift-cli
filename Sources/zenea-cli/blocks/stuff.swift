@@ -8,7 +8,7 @@ extension Block {
         case base64
     }
     
-    public func decode(as format: Block.DataFormat) -> String? {
+    public func encode(as format: Block.DataFormat) -> String? {
         switch format {
         case .raw:
             guard let string = String(data: self.content, encoding: .utf8) else { return nil }

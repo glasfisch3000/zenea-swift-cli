@@ -19,7 +19,7 @@ public struct ZeneaFetch: AsyncParsableCommand {
     
     public mutating func run() async throws {
         guard let (block, source) = try await ZeneaFetch.fetch(id: blockID) else { throw FetchError.notFound }
-        guard let output = block.decode(as: format) else { throw FetchError.unableToDecode }
+        guard let output = block.encode(as: format) else { throw FetchError.unableToEncode }
         
         if printSource {
             print(source.description)
@@ -44,12 +44,12 @@ public struct ZeneaFetch: AsyncParsableCommand {
 
 extension ZeneaFetch {
     public enum FetchError: Error, CustomStringConvertible {
-        case unableToDecode
+        case unableToEncode
         case notFound
         
         public var description: String {
             switch self {
-            case .unableToDecode: "Unable to decode block data."
+            case .unableToEncode: "Unable to encode block data."
             case .notFound: "Unable to get block with specified ID."
             }
         }
