@@ -11,8 +11,6 @@ fileprivate enum Source: Codable {
     case http(scheme: ZeneaHTTPClient.Scheme, domain: String, port: Int)
 }
 
-public let zeneaFiles = Files(path: FilePath(NSString("~/.zenea").expandingTildeInPath as String))
-
 public enum LoadSourcesError: Error, CustomStringConvertible {
     case missing
     case unableToRead
