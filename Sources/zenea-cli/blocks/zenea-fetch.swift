@@ -12,27 +12,45 @@ public struct ZeneaFetch: AsyncParsableCommand {
     
     public static var configuration: CommandConfiguration = .init(commandName: "fetch", abstract: "A Tool for fetching Zenea Project Data Layer blocks.", usage: "", discussion: "", version: "", shouldDisplay: true, subcommands: [], defaultSubcommand: nil, helpNames: nil)
     
-    @ArgumentParser.Argument var blockID: Block.ID
+    @Option(name: .shortAndLong) public var format: Block.DataFormat = .raw
+    @Flag(name: [.customShort("s"), .customLong("source")]) public var printSource = false
     
-    @Option(name: .shortAndLong) var format: BlockDataFormat = .raw
+    @ArgumentParser.Argument public var blockID: Block.ID
     
     public mutating func run() async throws {
+        guard let (block, source) = try await ZeneaFetch.fetch(id: blockID) else { throw FetchError.notFound }
+        
+        let output = try ZeneaFetch.decode(block.content, format: format)
+        
+        if printSource {
+            print(source.description)
+        }
+        print(output, terminator: "")
+    }
+    
+    public static func fetch(id: Block.ID) async throws -> (block: Block, source: BlockStorage)? {
         let client = HTTPClient(eventLoopGroupProvider: .singleton)
         defer { try? client.shutdown().wait() }
         
         let stores = try await loadSources(client: client).get()
         for store in stores {
-            guard let block = try? await store.fetchBlock(id: blockID).get() else { continue }
+            guard let block = try? await store.fetchBlock(id: id).get() else { continue }
             
-            switch format {
-            case .raw:
-                guard let string = String(data: block.content, encoding: .utf8) else { throw FetchError.unableToDecode }
-                print(string, terminator: "")
-            case .hex:
-                print(block.content.toHexString(), terminator: "")
-            case .base64:
-                print(block.content.base64EncodedString(), terminator: "")
-            }
+            return (block: block, source: store)
+        }
+        
+        return nil
+    }
+    
+    public static func decode(_ data: Data, format: Block.DataFormat) throws -> String {
+        switch format {
+        case .raw:
+            guard let string = String(data: data, encoding: .utf8) else { throw FetchError.unableToDecode }
+            return string
+        case .hex:
+            return data.toHexString()
+        case .base64:
+            return data.base64EncodedString()
         }
     }
 }
@@ -40,15 +58,19 @@ public struct ZeneaFetch: AsyncParsableCommand {
 extension ZeneaFetch {
     public enum FetchError: Error, CustomStringConvertible {
         case unableToDecode
+        case notFound
         
         public var description: String {
             switch self {
             case .unableToDecode: "Unable to decode block data."
+            case .notFound: "Unable to get block with specified ID."
             }
         }
     }
-    
-    public enum BlockDataFormat: String, ExpressibleByArgument {
+}
+
+extension Block {
+    public enum DataFormat: String, ExpressibleByArgument {
         case raw
         case hex
         case base64
