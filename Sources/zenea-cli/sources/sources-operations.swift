@@ -6,7 +6,7 @@ import zenea
 import zenea_fs
 import zenea_http
 
-public func listSources() async -> Result<[BlockSource], LoadSourcesError> {
+public func loadSources() async -> Result<[BlockSource], LoadSourcesError> {
     do {
         let handle = try await FileSystem.shared.openFile(forReadingAt: zeneaFiles.config.sources)
         defer { Task { try? await handle.close() } }
@@ -29,8 +29,8 @@ public func listSources() async -> Result<[BlockSource], LoadSourcesError> {
     }
 }
 
-public func loadSources(client: HTTPClient) async -> Result<[BlockStorage], LoadSourcesError> {
-    switch await listSources() {
+public func loadStores(client: HTTPClient) async -> Result<[BlockStorage], LoadSourcesError> {
+    switch await loadSources() {
     case .success(let sources):
         return .success(sources.map { source in
             switch source {
@@ -44,22 +44,15 @@ public func loadSources(client: HTTPClient) async -> Result<[BlockStorage], Load
     }
 }
 
-func writeSources(_ stores: [BlockStorage], replace: Bool = true) async -> Result<Void, WriteSourcesError> {
-    let sources = stores.compactMap { storage -> BlockSource? in
-        switch storage {
-        case let fs as BlockFS: return .file(path: fs.zeneaURL.string)
-        case let http as ZeneaHTTPClient: return .http(scheme: http.server.scheme, domain: http.server.address, port: http.server.port)
-        default: return nil
-        }
-    }
-    
+func writeSources(_ sources: [BlockSource], replace: Bool = true) async -> Result<Void, WriteSourcesError> {
     do {
         let data = try JSONEncoder().encode(sources)
         
         let handle = try await FileSystem.shared.openFile(forWritingAt: zeneaFiles.config.sources, options: .newFile(replaceExisting: replace))
-        defer { Task { try? await handle.close() } }
+        defer { Task { try? await handle.close(makeChangesVisible: true) } }
         
         try await handle.write(contentsOf: data, toAbsoluteOffset: 0)
+        try await handle.close(makeChangesVisible: true)
         
         return .success(())
     } catch let error as FileSystemError {
@@ -72,4 +65,16 @@ func writeSources(_ stores: [BlockStorage], replace: Bool = true) async -> Resul
     } catch {
         return .failure(.unknown)
     }
+}
+
+func writeStores(_ stores: [BlockStorage], replace: Bool = true) async -> Result<Void, WriteSourcesError> {
+    let sources = stores.compactMap { storage -> BlockSource? in
+        switch storage {
+        case let fs as BlockFS: return .file(path: fs.zeneaURL.string)
+        case let http as ZeneaHTTPClient: return .http(scheme: http.server.scheme, domain: http.server.address, port: http.server.port)
+        default: return nil
+        }
+    }
+    
+    return await writeSources(sources, replace: replace)
 }

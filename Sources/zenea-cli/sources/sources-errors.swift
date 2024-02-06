@@ -29,3 +29,13 @@ public enum WriteSourcesError: Error, CustomStringConvertible {
         }
     }
 }
+
+public enum RemoveSourcesError: Error, CustomStringConvertible {
+    case notFound
+    
+    public var description: String {
+        switch self {
+        case .notFound: "Unable to locate specified block source."
+        }
+    }
+}

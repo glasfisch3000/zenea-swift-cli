@@ -9,7 +9,7 @@ public func blocksList() async throws -> Set<Block.ID> {
     
     var results: Set<Block.ID> = []
     
-    let stores = try await loadSources(client: client).get()
+    let stores = try await loadStores(client: client).get()
     for store in stores {
         guard let blocks = try? await store.listBlocks().get() else { continue }
         results.formUnion(blocks)
@@ -22,7 +22,7 @@ public func blocksFetch(id: Block.ID) async throws -> (block: Block, source: Blo
     let client = HTTPClient(eventLoopGroupProvider: .singleton)
     defer { try? client.shutdown().wait() }
     
-    let stores = try await loadSources(client: client).get()
+    let stores = try await loadStores(client: client).get()
     for store in stores {
         guard let block = try? await store.fetchBlock(id: id).get() else { continue }
         
@@ -40,7 +40,7 @@ public func blocksPut(_ content: Data) async throws -> Block.ID? {
     
     var success = false
     
-    let stores = try await loadSources(client: client).get()
+    let stores = try await loadStores(client: client).get()
     for store in stores {
         switch await store.putBlock(content: block.content) {
         case .success(_): success = true
