@@ -48,6 +48,8 @@ func writeSources(_ sources: [BlockSource], replace: Bool = true) async -> Resul
     do {
         let data = try JSONEncoder().encode(sources)
         
+        try? await FileSystem.shared.createDirectory(at: zeneaFiles.config.sources.removingLastComponent(), withIntermediateDirectories: true)
+        
         let handle = try await FileSystem.shared.openFile(forWritingAt: zeneaFiles.config.sources, options: .newFile(replaceExisting: replace))
         defer { Task { try? await handle.close(makeChangesVisible: true) } }
         
