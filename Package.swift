@@ -9,7 +9,7 @@ let package = Package(
         .macOS("13.3")
     ],
     products: [
-        .executable(name: "zenea", targets: ["zenea-cli"])
+        .executable(name: "zenea-cli", targets: ["zenea-cli"])
     ],
     dependencies: [
         .package(url: "https://github.com/apple/swift-argument-parser.git", from: "1.3.0"),
