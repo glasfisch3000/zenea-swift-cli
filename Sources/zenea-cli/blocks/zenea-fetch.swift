@@ -19,8 +19,7 @@ public struct ZeneaFetch: AsyncParsableCommand {
     
     public mutating func run() async throws {
         guard let (block, source) = try await ZeneaFetch.fetch(id: blockID) else { throw FetchError.notFound }
-        
-        let output = try ZeneaFetch.decode(block.content, format: format)
+        guard let output = block.decode(as: format) else { throw FetchError.unableToDecode }
         
         if printSource {
             print(source.description)
@@ -40,18 +39,6 @@ public struct ZeneaFetch: AsyncParsableCommand {
         }
         
         return nil
-    }
-    
-    public static func decode(_ data: Data, format: Block.DataFormat) throws -> String {
-        switch format {
-        case .raw:
-            guard let string = String(data: data, encoding: .utf8) else { throw FetchError.unableToDecode }
-            return string
-        case .hex:
-            return data.toHexString()
-        case .base64:
-            return data.base64EncodedString()
-        }
     }
 }
 
@@ -74,6 +61,18 @@ extension Block {
         case raw
         case hex
         case base64
+    }
+    
+    public func decode(as format: Block.DataFormat) -> String? {
+        switch format {
+        case .raw:
+            guard let string = String(data: self.content, encoding: .utf8) else { return nil }
+            return string
+        case .hex:
+            return self.content.toHexString()
+        case .base64:
+            return self.content.base64EncodedString()
+        }
     }
 }
 
