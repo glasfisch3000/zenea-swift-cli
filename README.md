@@ -15,3 +15,20 @@ Once the process is done, you can find that product by running `swift build --sh
 You can directly run the executable product file, however you might want to copy it a directory like `/usr/bin/`.
 
 NOTE: This package may not work on systems that do not provide an adequate `Foundation` library. In any recent release of macOS, this should not be a problem. However, on Linux systems you might be using an older version of the library or it might be missing entirely. Apple is currently working on making an [open-source swift version](https://github.com/apple/swift-foundation) of that package that can be used as a dependency on all systems, but as it is still in an early stage, you could run into problems compiling this package.
+
+## Functions and Subcommands
+
+### Help
+- show general help information: `zenea -h`
+- show help information about a subcommand: `zenea help <subcommand>`
+
+### Blocks
+- list blocks available for download: `zenea list`
+- download a block: `zenea fetch <block-id>`
+- upload a block: `zenea put <block-content>`
+
+### Block Sources
+- list available block sources: `zenea sources list`
+- reset/initialise block sources: `zenea sources reset`
+- add block source: `zenea sources add <source>`
+- remove block source: `zenea sources remove <source>`
