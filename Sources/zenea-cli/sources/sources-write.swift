@@ -1,41 +1,9 @@
 import Foundation
 import NIOFileSystem
-import AsyncHTTPClient
 
 import zenea
 import zenea_fs
 import zenea_http
-
-public func loadSources() async -> Result<[BlockSource], LoadSourcesError> {
-    do {
-        let handle = try await FileSystem.shared.openFile(forReadingAt: zeneaFiles.config.sources)
-        defer { Task { try? await handle.close() } }
-        
-        let buffer = try await handle.readToEnd(maximumSizeAllowed: .megabytes(42))
-        let sources = try? JSONDecoder().decode([BlockSource].self, from: buffer)
-        
-        guard let sources = sources else { return .failure(.corrupt) }
-        
-        return .success(sources)
-    } catch let error as FileSystemError {
-        switch error.code {
-        case .notFound: return .failure(.missing)
-        default: return .failure(.unableToRead)
-        }
-    } catch _ as DecodingError {
-        return .failure(.corrupt)
-    } catch {
-        return .failure(.unknown)
-    }
-}
-
-public func loadStores(client: HTTPClient) async -> Result<[BlockStorage], LoadSourcesError> {
-    switch await loadSources() {
-    case .success(let sources):
-        return .success(sources.map { $0.makeStorage(client: client) })
-    case .failure(let error): return .failure(error)
-    }
-}
 
 func writeSources(_ sources: [BlockSource], replace: Bool = true) async -> Result<Void, WriteSourcesError> {
     do {
@@ -72,4 +40,40 @@ func writeStores(_ stores: [BlockStorage], replace: Bool = true) async -> Result
     }
     
     return await writeSources(sources, replace: replace)
+}
+
+public enum WriteSourcesError: Error, CustomStringConvertible {
+    case exists
+    case corrupt
+    case unableToWrite
+    case unknown
+    
+    public var description: String {
+        switch self {
+        case .exists: "Unable to write sources config file: File exists."
+        case .corrupt: "Unable to write sources config file: Corrupt data."
+        case .unableToWrite: "Unable to open sources config file."
+        case .unknown: "Unknown error while writing sources config file."
+        }
+    }
+}
+
+public enum AddSourcesError: Error, CustomStringConvertible {
+    case exists
+    
+    public var description: String {
+        switch self {
+        case .exists: "Specified source already exists."
+        }
+    }
+}
+
+public enum RemoveSourcesError: Error, CustomStringConvertible {
+    case notFound
+    
+    public var description: String {
+        switch self {
+        case .notFound: "Unable to locate specified block source."
+        }
+    }
 }
