@@ -8,7 +8,7 @@ public struct ZeneaFetch: AsyncParsableCommand {
     public static var configuration: CommandConfiguration = .init(commandName: "fetch", abstract: "Fetch Zenea blocks.", usage: "", discussion: "", version: "", shouldDisplay: true, subcommands: [], defaultSubcommand: nil, helpNames: nil)
     
     @Option(name: .shortAndLong, help: "Specify formatting of the block's content. One of raw|hex|base64, default is raw.") public var format: Block.DataFormat = .raw
-    @Flag(name: [.customShort("s"), .customLong("print-sources")], help: "Show which source the block was fetched from.") public var printSource = false
+    @Flag(name: [.customShort("s"), .customLong("print-source")], help: "Show which source the block was fetched from.") public var printSource = false
     
     @ArgumentParser.Argument public var blockID: Block.ID
     
