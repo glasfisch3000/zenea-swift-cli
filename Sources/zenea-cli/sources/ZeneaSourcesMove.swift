@@ -15,7 +15,7 @@ public struct ZeneaSourcesMove: AsyncParsableCommand {
         guard let index = sources.firstIndex(where: { $0.name == name }) else { throw MoveSourcesError.notFound }
         
         let source = sources.remove(at: index)
-        sources.insert(source, at: newIndex)
+        sources.insert(source, at: newIndex-1)
         
         try await writeSources(sources, replace: true).get()
     }
