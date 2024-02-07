@@ -55,12 +55,10 @@ public class BlockPutOperation: AsyncSequence {
 
 public enum PutError: Error, CustomStringConvertible {
     case unableToDecode
-    case unableToUpload
     
     public var description: String {
         switch self {
         case .unableToDecode: "Unable to decode block data."
-        case .unableToUpload: "Unable to put block with specified content."
         }
     }
 }

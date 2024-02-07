@@ -30,18 +30,6 @@ func writeSources(_ sources: [BlockSource], replace: Bool = true) async -> Resul
     }
 }
 
-func writeStores(_ stores: [BlockStorage], replace: Bool = true) async -> Result<Void, WriteSourcesError> {
-    let sources = stores.compactMap { storage -> BlockSource? in
-        switch storage {
-        case let fs as BlockFS: return .file(path: fs.zeneaURL.string)
-        case let http as ZeneaHTTPClient: return .http(scheme: http.server.scheme, domain: http.server.address, port: http.server.port)
-        default: return nil
-        }
-    }
-    
-    return await writeSources(sources, replace: replace)
-}
-
 public enum WriteSourcesError: Error, CustomStringConvertible {
     case exists
     case corrupt
@@ -59,11 +47,13 @@ public enum WriteSourcesError: Error, CustomStringConvertible {
 }
 
 public enum AddSourcesError: Error, CustomStringConvertible {
+    case nameExists
     case exists
     
     public var description: String {
         switch self {
-        case .exists: "Specified source already exists."
+        case .nameExists: "Source with specified identifier already exists."
+        case .exists: "Source with specified location already exists."
         }
     }
 }
