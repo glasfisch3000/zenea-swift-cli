@@ -12,7 +12,7 @@ public struct ZeneaList: AsyncParsableCommand {
     public mutating func run() async throws {
         if printSources {
             for await (source, result) in try await blocksList() {
-                print(source.description, terminator: " -> ")
+                print(source.name, terminator: " -> ")
                 
                 switch result {
                 case .success(let blocks):

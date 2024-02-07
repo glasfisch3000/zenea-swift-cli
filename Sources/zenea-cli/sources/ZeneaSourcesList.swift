@@ -9,7 +9,7 @@ public struct ZeneaSourcesList: AsyncParsableCommand {
         let sources = try await loadSources().get()
         
         for source in sources {
-            print(source.description)
+            print("\(source.name): \(source.location.description)")
         }
     }
 }

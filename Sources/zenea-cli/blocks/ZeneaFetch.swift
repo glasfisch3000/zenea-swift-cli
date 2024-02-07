@@ -18,7 +18,7 @@ public struct ZeneaFetch: AsyncParsableCommand {
             guard let output = block.encode(as: format) else { throw FetchError.unableToEncode }
             
             if printSource {
-                print(source.description)
+                print(source.name)
             }
             print(output, terminator: "")
             

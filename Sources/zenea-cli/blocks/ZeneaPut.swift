@@ -15,7 +15,7 @@ public struct ZeneaPut: AsyncParsableCommand {
         guard let block = Block(decoding: content, as: format) else { throw PutError.unableToDecode }
         
         for await (source, result) in try await blocksPut(block.content) {
-            print(source.description, terminator: " -> ")
+            print(source.name, terminator: " -> ")
             switch result {
             case .success(let blockID): print(blockID.description)
             case .failure(.exists): print("Error: Block already exists.")

@@ -6,15 +6,23 @@ import zenea
 import zenea_fs
 import zenea_http
 
-public enum BlockSource {
-    case file(path: String)
-    case http(scheme: ZeneaHTTPClient.Scheme, domain: String, port: Int)
+public struct BlockSource {
+    public enum SourceLocation {
+        case file(path: String)
+        case http(scheme: ZeneaHTTPClient.Scheme, domain: String, port: Int)
+    }
+    
+    var name: String
+    var location: SourceLocation
 }
 
 extension BlockSource: Hashable {}
 extension BlockSource: Codable {}
 
-extension BlockSource: CustomStringConvertible {
+extension BlockSource.SourceLocation: Hashable {}
+extension BlockSource.SourceLocation: Codable {}
+
+extension BlockSource.SourceLocation: CustomStringConvertible {
     public init?(parsing string: String) {
         if let http = ZeneaHTTPClient.Server(parsing: string) {
             self = .http(scheme: http.scheme, domain: http.address, port: http.port)
@@ -35,7 +43,7 @@ extension BlockSource: CustomStringConvertible {
     }
 }
 
-extension BlockSource: ExpressibleByArgument {
+extension BlockSource.SourceLocation: ExpressibleByArgument {
     public init?(argument: String) {
         self.init(parsing: argument)
     }
@@ -43,7 +51,7 @@ extension BlockSource: ExpressibleByArgument {
 
 extension BlockSource {
     func makeStorage(client: HTTPClient) -> BlockStorage {
-        switch self {
+        switch self.location {
         case .file(path: let path):
             return BlockFS(path)
         case .http(scheme: let scheme, domain: let domain, port: let port):

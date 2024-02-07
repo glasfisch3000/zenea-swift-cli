@@ -10,12 +10,11 @@ public struct ZeneaCheck: AsyncParsableCommand {
     @ArgumentParser.Argument public var blockID: Block.ID
     
     public mutating func run() async throws {
-        for await (source, result) in try await blocksFetch(id: blockID) {
-            print(source.description, terminator: " -> ")
+        for await (source, result) in try await blocksCheck(id: blockID) {
+            print(source.name, terminator: " -> ")
             switch result {
-            case .success(_): print("Available.")
-            case .failure(.notFound): print("Not available.")
-            case .failure(.invalidContent): print("Error: Invalid Content.")
+            case .success(true): print("Available.")
+            case .success(false): print("Not available.")
             case .failure(.unable): print("Error.")
             }
         }
