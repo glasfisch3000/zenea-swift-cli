@@ -1,6 +1,9 @@
 import ArgumentParser
 import NIOFileSystem
+import AsyncHTTPClient
 
+import zenea
+import zenea_fs
 import zenea_http
 
 public enum BlockSource {
@@ -35,5 +38,16 @@ extension BlockSource: CustomStringConvertible {
 extension BlockSource: ExpressibleByArgument {
     public init?(argument: String) {
         self.init(parsing: argument)
+    }
+}
+
+extension BlockSource {
+    func makeStorage(client: HTTPClient) -> BlockStorage {
+        switch self {
+        case .file(path: let path):
+            return BlockFS(path)
+        case .http(scheme: let scheme, domain: let domain, port: let port):
+            return ZeneaHTTPClient(scheme: scheme, address: domain, port: port, client: client)
+        }
     }
 }

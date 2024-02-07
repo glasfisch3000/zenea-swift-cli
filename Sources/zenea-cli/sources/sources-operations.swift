@@ -32,14 +32,7 @@ public func loadSources() async -> Result<[BlockSource], LoadSourcesError> {
 public func loadStores(client: HTTPClient) async -> Result<[BlockStorage], LoadSourcesError> {
     switch await loadSources() {
     case .success(let sources):
-        return .success(sources.map { source in
-            switch source {
-            case .file(path: let path):
-                BlockFS(path)
-            case .http(scheme: let scheme, domain: let domain, port: let port):
-                ZeneaHTTPClient(scheme: scheme, address: domain, port: port, client: client)
-            }
-        })
+        return .success(sources.map { $0.makeStorage(client: client) })
     case .failure(let error): return .failure(error)
     }
 }

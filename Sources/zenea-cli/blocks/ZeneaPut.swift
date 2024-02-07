@@ -13,8 +13,16 @@ public struct ZeneaPut: AsyncParsableCommand {
     
     public mutating func run() async throws {
         guard let block = Block(decoding: content, as: format) else { throw PutError.unableToDecode }
-        guard let resultID = try await blocksPut(block.content) else { throw PutError.unableToUpload }
         
-        print(resultID.description)
+        for await result in try await blocksPut(block.content) {
+            print(result.0.description, terminator: " -> ")
+            switch result.1 {
+            case .success(let blockID): print(blockID.description)
+            case .failure(.exists): print("Error: Block already exists.")
+            case .failure(.notPermitted): print("Error: Not permitted.")
+            case .failure(.unavailable): print("Error: Block source unavailable.")
+            case .failure(.unable): print("Error.")
+            }
+        }
     }
 }

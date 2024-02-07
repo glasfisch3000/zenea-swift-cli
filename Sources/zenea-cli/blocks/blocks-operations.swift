@@ -1,4 +1,5 @@
 import Foundation
+import zenea_http
 import AsyncHTTPClient
 
 import zenea
@@ -32,21 +33,52 @@ public func blocksFetch(id: Block.ID) async throws -> (block: Block, source: Blo
     return nil
 }
 
-public func blocksPut(_ content: Data) async throws -> Block.ID? {
-    let block = Block(content: content)
-    
+public func blocksPut(_ content: Data) async throws -> BlockPutOperation {
     let client = HTTPClient(eventLoopGroupProvider: .singleton)
-    defer { try? client.shutdown().wait() }
     
-    var success = false
-    
-    let stores = try await loadStores(client: client).get()
-    for store in stores {
-        switch await store.putBlock(content: block.content) {
-        case .success(_): success = true
-        default: break
+    let sources = try await loadSources().get()
+    return BlockPutOperation(block: content, sources: sources, client: client)
+}
+
+public class BlockPutOperation: AsyncSequence {
+    public struct AsyncIterator: AsyncIteratorProtocol {
+        public typealias Element = BlockPutOperation.Element
+        
+        public var operation: BlockPutOperation
+        public var index: BlockPutOperation.Index = 0
+        
+        public mutating func next() async -> BlockPutOperation.Element? {
+            defer { index += 1 }
+            return await operation.put(index)
         }
     }
     
-    return success ? block.id : nil
+    public typealias Element = (BlockSource, Result<Block.ID, BlockPutError>)
+    public typealias Index = Int
+    
+    let block: Data
+    let sources: [BlockSource]
+    let client: HTTPClient
+    
+    init(block: Data, sources: [BlockSource], client: HTTPClient) {
+        self.block = block
+        self.sources = sources
+        self.client = client
+    }
+    
+    private func put(_ index: Index) async -> Element? {
+        guard index < sources.count else { return nil }
+        let source = sources[index]
+        let store = source.makeStorage(client: client)
+        
+        return (source, await store.putBlock(content: block))
+    }
+    
+    public func makeAsyncIterator() -> AsyncIterator {
+        AsyncIterator(operation: self)
+    }
+    
+    deinit {
+        try? client.shutdown().wait()
+    }
 }
