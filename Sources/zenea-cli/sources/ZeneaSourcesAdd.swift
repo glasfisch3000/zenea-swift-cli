@@ -23,3 +23,15 @@ public struct ZeneaSourcesAdd: AsyncParsableCommand {
         try await writeSources(sources, replace: true).get()
     }
 }
+
+public enum AddSourcesError: Error, CustomStringConvertible {
+    case nameExists
+    case exists
+    
+    public var description: String {
+        switch self {
+        case .nameExists: "A source with the specified identifier already exists."
+        case .exists: "A source with the specified location already exists."
+        }
+    }
+}

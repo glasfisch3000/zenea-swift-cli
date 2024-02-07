@@ -20,3 +20,15 @@ public struct ZeneaSourcesMove: AsyncParsableCommand {
         try await writeSources(sources, replace: true).get()
     }
 }
+
+public enum MoveSourcesError: Error, CustomStringConvertible {
+    case notFound
+    case indexOutOfBounds
+    
+    public var description: String {
+        switch self {
+        case .notFound: "Unable to locate specified block source."
+        case .indexOutOfBounds: "The specified index is not in the list."
+        }
+    }
+}

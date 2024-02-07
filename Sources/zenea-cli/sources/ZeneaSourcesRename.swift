@@ -27,3 +27,15 @@ public struct ZeneaSourcesRename: AsyncParsableCommand {
         try await writeSources(sources, replace: true).get()
     }
 }
+
+public enum RenameSourcesError: Error, CustomStringConvertible {
+    case notFound
+    case nameExists
+    
+    public var description: String {
+        switch self {
+        case .notFound: "Unable to locate specified block source."
+        case .nameExists: "A source with the specified identifier already exists."
+        }
+    }
+}
