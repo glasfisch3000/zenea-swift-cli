@@ -7,18 +7,24 @@ public struct ZeneaFetch: AsyncParsableCommand {
     
     public static var configuration: CommandConfiguration = .init(commandName: "fetch", abstract: "Fetch Zenea blocks.", usage: "", discussion: "", version: "", shouldDisplay: true, subcommands: [], defaultSubcommand: nil, helpNames: nil)
     
-    @Option(name: .shortAndLong) public var format: Block.DataFormat = .raw
-    @Flag(name: [.customShort("s"), .customLong("print-source")]) public var printSource = false
+    @Option(name: .shortAndLong, help: "Specify formatting of the block's content. One of raw|hex|base64, default is raw.") public var format: Block.DataFormat = .raw
+    @Flag(name: [.customShort("s"), .customLong("print-sources")], help: "Show which source the block was fetched from.") public var printSource = false
     
     @ArgumentParser.Argument public var blockID: Block.ID
     
     public mutating func run() async throws {
-        guard let (block, source) = try await blocksFetch(id: blockID) else { throw FetchError.notFound }
-        guard let output = block.encode(as: format) else { throw FetchError.unableToEncode }
-        
-        if printSource {
-            print(source.description)
+        for await (source, block) in try await blocksFetch(id: blockID) {
+            guard let block = try? block.get() else { continue }
+            guard let output = block.encode(as: format) else { throw FetchError.unableToEncode }
+            
+            if printSource {
+                print(source.description)
+            }
+            print(output, terminator: "")
+            
+            return
         }
-        print(output, terminator: "")
+        
+        throw FetchError.notFound
     }
 }

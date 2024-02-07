@@ -19,18 +19,54 @@ public func blocksList() async throws -> Set<Block.ID> {
     return results
 }
 
-public func blocksFetch(id: Block.ID) async throws -> (block: Block, source: BlockStorage)? {
+public func blocksFetch(id: Block.ID) async throws -> BlockFetchOperation {
     let client = HTTPClient(eventLoopGroupProvider: .singleton)
-    defer { try? client.shutdown().wait() }
     
-    let stores = try await loadStores(client: client).get()
-    for store in stores {
-        guard let block = try? await store.fetchBlock(id: id).get() else { continue }
+    let sources = try await loadSources().get()
+    return BlockFetchOperation(block: id, sources: sources, client: client)
+}
+
+public class BlockFetchOperation: AsyncSequence {
+    public struct AsyncIterator: AsyncIteratorProtocol {
+        public typealias Element = BlockFetchOperation.Element
         
-        return (block: block, source: store)
+        public var operation: BlockFetchOperation
+        public var index: BlockFetchOperation.Index = 0
+        
+        public mutating func next() async -> BlockFetchOperation.Element? {
+            defer { index += 1 }
+            return await operation.fetch(index)
+        }
     }
     
-    return nil
+    public typealias Element = (BlockSource, Result<Block, BlockFetchError>)
+    public typealias Index = Int
+    
+    let block: Block.ID
+    let sources: [BlockSource]
+    let client: HTTPClient
+    
+    init(block: Block.ID, sources: [BlockSource], client: HTTPClient) {
+        self.block = block
+        self.sources = sources
+        self.client = client
+    }
+    
+    private func fetch(_ index: Index) async -> Element? {
+        guard index < sources.count else { return nil }
+        let source = sources[index]
+        let store = source.makeStorage(client: client)
+        
+        return (source, await store.fetchBlock(id: block))
+    }
+    
+    public func makeAsyncIterator() -> AsyncIterator {
+        AsyncIterator(operation: self)
+    }
+    
+    deinit {
+        try? client.shutdown().wait()
+    }
 }
 
 public func blocksPut(_ content: Data) async throws -> BlockPutOperation {
