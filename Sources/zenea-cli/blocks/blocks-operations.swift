@@ -4,19 +4,52 @@ import AsyncHTTPClient
 
 import zenea
 
-public func blocksList() async throws -> Set<Block.ID> {
+public func blocksList() async throws -> BlockListOperation {
     let client = HTTPClient(eventLoopGroupProvider: .singleton)
-    defer { try? client.shutdown().wait() }
     
-    var results: Set<Block.ID> = []
-    
-    let stores = try await loadStores(client: client).get()
-    for store in stores {
-        guard let blocks = try? await store.listBlocks().get() else { continue }
-        results.formUnion(blocks)
+    let sources = try await loadSources().get()
+    return BlockListOperation(sources: sources, client: client)
+}
+
+public class BlockListOperation: AsyncSequence {
+    public struct AsyncIterator: AsyncIteratorProtocol {
+        public typealias Element = BlockListOperation.Element
+        
+        public var operation: BlockListOperation
+        public var index: BlockListOperation.Index = 0
+        
+        public mutating func next() async -> BlockListOperation.Element? {
+            defer { index += 1 }
+            return await operation.list(index)
+        }
     }
     
-    return results
+    public typealias Element = (BlockSource, Result<Set<Block.ID>, BlockListError>)
+    public typealias Index = Int
+    
+    let sources: [BlockSource]
+    let client: HTTPClient
+    
+    init(sources: [BlockSource], client: HTTPClient) {
+        self.sources = sources
+        self.client = client
+    }
+    
+    private func list(_ index: Index) async -> Element? {
+        guard index < sources.count else { return nil }
+        let source = sources[index]
+        let store = source.makeStorage(client: client)
+        
+        return (source, await store.listBlocks())
+    }
+    
+    public func makeAsyncIterator() -> AsyncIterator {
+        AsyncIterator(operation: self)
+    }
+    
+    deinit {
+        try? client.shutdown().wait()
+    }
 }
 
 public func blocksFetch(id: Block.ID) async throws -> BlockFetchOperation {
