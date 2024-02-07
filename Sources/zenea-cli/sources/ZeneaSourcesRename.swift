@@ -11,12 +11,12 @@ public struct ZeneaSourcesRename: AsyncParsableCommand {
     public func run() async throws {
         var sources = try await loadSources().get()
         
+        if sources.contains(where: { $0.name == newName }) { throw RenameSourcesError.nameExists }
+        
         var renamed = false
         for i in sources.indices {
             let source = sources[i]
-            
             guard source.name == oldName else { continue }
-            guard source.name != newName else { throw RenameSourcesError.nameExists }
             
             renamed = true
             sources[i].name = newName
