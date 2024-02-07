@@ -1,0 +1,29 @@
+import ArgumentParser
+
+public struct ZeneaSourcesRename: AsyncParsableCommand {
+    public init() {}
+    
+    public static var configuration: CommandConfiguration = .init(commandName: "rename", abstract: "Rename a Zenea block source.", usage: "", discussion: "", version: "", shouldDisplay: true, subcommands: [], defaultSubcommand: nil, helpNames: nil)
+    
+    @Argument var oldName: String
+    @Argument var newName: String
+    
+    public func run() async throws {
+        var sources = try await loadSources().get()
+        
+        var renamed = false
+        for i in sources.indices {
+            let source = sources[i]
+            
+            guard source.name == oldName else { continue }
+            guard source.name != newName else { throw RenameSourcesError.nameExists }
+            
+            renamed = true
+            sources[i].name = newName
+        }
+        
+        guard renamed else { throw RenameSourcesError.notFound }
+        
+        try await writeSources(sources, replace: true).get()
+    }
+}

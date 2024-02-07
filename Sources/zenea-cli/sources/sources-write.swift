@@ -52,8 +52,8 @@ public enum AddSourcesError: Error, CustomStringConvertible {
     
     public var description: String {
         switch self {
-        case .nameExists: "Source with specified identifier already exists."
-        case .exists: "Source with specified location already exists."
+        case .nameExists: "A source with the specified identifier already exists."
+        case .exists: "A source with the specified location already exists."
         }
     }
 }
@@ -64,6 +64,18 @@ public enum RemoveSourcesError: Error, CustomStringConvertible {
     public var description: String {
         switch self {
         case .notFound: "Unable to locate specified block source."
+        }
+    }
+}
+
+public enum RenameSourcesError: Error, CustomStringConvertible {
+    case notFound
+    case nameExists
+    
+    public var description: String {
+        switch self {
+        case .notFound: "Unable to locate specified block source."
+        case .nameExists: "A source with the specified identifier already exists."
         }
     }
 }
