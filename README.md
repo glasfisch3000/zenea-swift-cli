@@ -35,5 +35,7 @@ Blocks can be encoded or decoded in one of three formats: `raw`, `hex` and `base
 ### Block Sources
 - list available block sources: `zenea sources list`
 - reset/initialise block sources: `zenea sources reset`
-- add block source: `zenea sources add <source>`
-- remove block source: `zenea sources remove <source>`
+- add block source: `zenea sources add <name> <location>`
+- move a block source up or down the list: `zenea sources move <name> <new-index>`
+- rename a block source: `zenea sources rename <old-name> <new-name>`
+- remove block source: `zenea sources remove <name>`
