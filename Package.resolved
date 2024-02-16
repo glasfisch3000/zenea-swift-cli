@@ -28,6 +28,15 @@
       }
     },
     {
+      "identity" : "fastcdc-swift",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/glasfisch3000/fastcdc-swift.git",
+      "state" : {
+        "branch" : "main",
+        "revision" : "2b99ef22f20395af2ba6096f9c674a118e350cdb"
+      }
+    },
+    {
       "identity" : "multipart-kit",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/vapor/multipart-kit.git",
@@ -77,8 +86,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-collections.git",
       "state" : {
-        "revision" : "d029d9d39c87bed85b1c50adee7c41795261a192",
-        "version" : "1.0.6"
+        "revision" : "94cf62b3ba8d4bed62680a282d4c25f9c63c2efb",
+        "version" : "1.1.0"
       }
     },
     {
@@ -181,12 +190,21 @@
       }
     },
     {
+      "identity" : "valya-swift",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/zenea-project/valya-swift.git",
+      "state" : {
+        "branch" : "main",
+        "revision" : "70b7d84764f3b3b2792e813936f691db2d482877"
+      }
+    },
+    {
       "identity" : "vapor",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/vapor/vapor.git",
       "state" : {
-        "revision" : "4942d74e8493fc918ed6144c835c8a0e6affd4f4",
-        "version" : "4.92.1"
+        "revision" : "9da9d14f43bc1b32b384f0b4eb231b8a5a851dee",
+        "version" : "4.92.3"
       }
     },
     {
@@ -203,8 +221,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/glasfisch3000/zenea-swift.git",
       "state" : {
-        "revision" : "11c5a09629a72d2fc70f642ef6d500aca696201d",
-        "version" : "1.0.0-alpha7"
+        "branch" : "main",
+        "revision" : "3b6dee10df8b3140e58e499fa6c1059f3336b71d"
       }
     }
   ],
