@@ -33,7 +33,7 @@
       "location" : "https://github.com/glasfisch3000/fastcdc-swift.git",
       "state" : {
         "branch" : "main",
-        "revision" : "2b99ef22f20395af2ba6096f9c674a118e350cdb"
+        "revision" : "b1e4228256ff763f5c4541b8f9b35d464637b486"
       }
     },
     {
@@ -195,7 +195,7 @@
       "location" : "https://github.com/zenea-project/valya-swift.git",
       "state" : {
         "branch" : "main",
-        "revision" : "70b7d84764f3b3b2792e813936f691db2d482877"
+        "revision" : "ed6695f6318daf8680cfc0dc7abd918125186f65"
       }
     },
     {
