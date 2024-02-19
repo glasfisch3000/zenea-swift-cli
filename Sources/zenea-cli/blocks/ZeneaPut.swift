@@ -17,7 +17,8 @@ public struct ZeneaPut: AsyncParsableCommand {
         for await (source, result) in try await blocksPut(block.content) {
             print(source.name, terminator: " -> ")
             switch result {
-            case .success(let blockID): print(blockID.description)
+            case .success(let block): print(block.id.description)
+            case .failure(.overflow): print("Error: Block is too large.")
             case .failure(.exists): print("Error: Block already exists.")
             case .failure(.notPermitted): print("Error: Not permitted.")
             case .failure(.unavailable): print("Error: Block source unavailable.")

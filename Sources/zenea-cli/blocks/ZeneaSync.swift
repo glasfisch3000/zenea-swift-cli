@@ -35,7 +35,7 @@ public struct ZeneaSync: AsyncParsableCommand {
         }
         
         let store = destination.makeStorage(client: client)
-        switch await store.putBlock(content: block.content) {
+        switch await store.putBlock(data: block.content) {
         case .success(_): return
         case .failure(let error): throw SyncError.putError(error)
         }

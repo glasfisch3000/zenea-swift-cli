@@ -25,6 +25,6 @@ public struct ZeneaFetch: AsyncParsableCommand {
             return
         }
         
-        throw FetchError.notFound
+        throw FetchError.notFound(blockID)
     }
 }

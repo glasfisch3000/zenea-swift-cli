@@ -7,13 +7,13 @@ import valya
 public func blocksDownload(id: Block.ID) async throws -> Data {
     let block = try await blocksGet(id)
     
-    switch block.decode() {
+    switch Valya(.v1_1).decode(block.content) {
     case .error, .corrupted: throw DownloadError.decodeError
     case .empty, .regularBlock: return block.content
-    case .valyaBlock(let valya):
+    case .success(let contents):
         var data = Data()
-        for block in valya.content {
-            try await data.append(blocksDownload(id: block))
+        for subblock in contents {
+            try await data.append(blocksDownload(id: subblock))
         }
         
         return data

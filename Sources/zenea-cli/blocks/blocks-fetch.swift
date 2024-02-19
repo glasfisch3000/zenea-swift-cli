@@ -54,12 +54,12 @@ public class BlockFetchOperation: AsyncSequence {
 
 public enum FetchError: Error, CustomStringConvertible {
     case unableToEncode
-    case notFound
+    case notFound(_ id: Block.ID)
     
     public var description: String {
         switch self {
         case .unableToEncode: "Unable to encode block data."
-        case .notFound: "Unable to get block with specified ID."
+        case .notFound(let id): "Unable to get block with ID \(id.description)."
         }
     }
 }

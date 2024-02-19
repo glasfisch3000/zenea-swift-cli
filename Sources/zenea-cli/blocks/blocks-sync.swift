@@ -13,6 +13,7 @@ public enum SyncError: Error, CustomStringConvertible {
         case .destinationNotFound: "Unable to locate specified block destination."
         case .fetchError(.invalidContent), .fetchError(.unable): "Internal error at source."
         case .fetchError(.notFound): "Specified block not found at source."
+        case .putError(.overflow): "Block is too large."
         case .putError(.exists): "Block already exists at destination."
         case .putError(.notPermitted): "Not permitted to put block at destination."
         case .putError(.unavailable): "Destination not available."

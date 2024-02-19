@@ -23,7 +23,7 @@ public class BlockPutOperation: AsyncSequence {
         }
     }
     
-    public typealias Element = (BlockSource, Result<Block.ID, BlockPutError>)
+    public typealias Element = (BlockSource, Result<Block, BlockPutError>)
     public typealias Index = Int
     
     let block: Data
@@ -41,7 +41,7 @@ public class BlockPutOperation: AsyncSequence {
         let source = sources[index]
         let store = source.makeStorage(client: client)
         
-        return (source, await store.putBlock(content: block))
+        return (source, await store.putBlock(data: block))
     }
     
     public func makeAsyncIterator() -> AsyncIterator {
