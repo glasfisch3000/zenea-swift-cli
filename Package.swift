@@ -9,7 +9,7 @@ let package = Package(
         .macOS("13.3")
     ],
     products: [
-        .executable(name: "zenea-cli", targets: ["zenea-cli"])
+        .executable(name: "zenea-cli", targets: ["ZeneaCLI"])
     ],
     dependencies: [
         .package(url: "https://github.com/apple/swift-argument-parser.git", from: "1.3.0"),
@@ -20,7 +20,7 @@ let package = Package(
     ],
     targets: [
         .executableTarget(
-            name: "zenea-cli",
+            name: "ZeneaCLI",
             dependencies: [
                 .product(name: "ArgumentParser", package: "swift-argument-parser"),
                 .product(name: "AsyncHTTPClient", package: "async-http-client"),
