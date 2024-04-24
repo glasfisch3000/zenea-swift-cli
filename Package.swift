@@ -14,9 +14,11 @@ let package = Package(
     dependencies: [
         .package(url: "https://github.com/apple/swift-argument-parser.git", from: "1.3.0"),
         .package(url: "https://github.com/swift-server/async-http-client.git", from: "1.20.1"),
-        .package(url: "https://github.com/apple/swift-nio.git", from: "2.63.0"),
-        .package(url: "https://github.com/glasfisch3000/zenea-swift.git", from: "1.0.0-alpha8"),
-        .package(url: "https://github.com/zenea-project/valya-swift.git", branch: "main")
+        .package(url: "https://github.com/apple/swift-nio.git", from: "2.64.0"),
+        .package(url: "https://github.com/zenea-project/zenea-swift.git", from: "3.0.2"),
+        .package(url: "https://github.com/zenea-project/zenea-swift-files.git", from: "1.0.0"),
+        .package(url: "https://github.com/zenea-project/zenea-swift-http.git", from: "1.0.0"),
+        .package(url: "https://github.com/zenea-project/valya-swift.git", from: "1.0.0")
     ],
     targets: [
         .executableTarget(
@@ -26,8 +28,11 @@ let package = Package(
                 .product(name: "AsyncHTTPClient", package: "async-http-client"),
                 .product(name: "_NIOFileSystem", package: "swift-nio"),
                 .product(name: "zenea-swift", package: "zenea-swift"),
+                .product(name: "zenea-files", package: "zenea-swift-files"),
+                .product(name: "zenea-swift-http", package: "zenea-swift-http"),
                 .product(name: "valya-swift", package: "valya-swift")
-            ]
+            ],
+            path: "./Sources/zenea-cli"
         )
     ]
 )

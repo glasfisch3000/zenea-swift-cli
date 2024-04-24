@@ -1,7 +1,6 @@
-import ArgumentParser
 import Foundation
-
-import zenea
+import ArgumentParser
+import Zenea
 
 extension Block {
     public enum DataFormat: String, ExpressibleByArgument {

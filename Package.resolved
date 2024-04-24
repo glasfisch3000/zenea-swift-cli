@@ -32,8 +32,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/glasfisch3000/fastcdc-swift.git",
       "state" : {
-        "branch" : "main",
-        "revision" : "010d999fbacef872e1bfc82a0ec3b867c52f2371"
+        "revision" : "20a8252fb09ad93c69724f75206475df9c85ca5e",
+        "version" : "3.0.0"
       }
     },
     {
@@ -95,8 +95,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-crypto.git",
       "state" : {
-        "revision" : "cc76b894169a3c86b71bac10c78a4db6beb7a9ad",
-        "version" : "3.2.0"
+        "revision" : "f0525da24dc3c6cbb2b6b338b65042bc91cbc4bb",
+        "version" : "3.3.0"
       }
     },
     {
@@ -131,8 +131,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-nio.git",
       "state" : {
-        "revision" : "635b2589494c97e48c62514bc8b37ced762e0a62",
-        "version" : "2.63.0"
+        "revision" : "359c461e5561d22c6334828806cc25d759ca7aa6",
+        "version" : "2.65.0"
       }
     },
     {
@@ -194,8 +194,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/zenea-project/valya-swift.git",
       "state" : {
-        "branch" : "main",
-        "revision" : "e9dbff92b2fd7b6ee8f446943208578026cc8b56"
+        "revision" : "6b4e434313cc01d8c343cad0109cb4b672af8700",
+        "version" : "1.0.0"
       }
     },
     {
@@ -203,8 +203,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/vapor/vapor.git",
       "state" : {
-        "revision" : "9da9d14f43bc1b32b384f0b4eb231b8a5a851dee",
-        "version" : "4.92.3"
+        "revision" : "526a000bb082a261566b6adea3c1a1ddbed98a19",
+        "version" : "4.93.0"
       }
     },
     {
@@ -212,17 +212,35 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/vapor/websocket-kit.git",
       "state" : {
-        "revision" : "53fe0639a98903858d0196b699720decb42aee7b",
-        "version" : "2.14.0"
+        "revision" : "4232d34efa49f633ba61afde365d3896fc7f8740",
+        "version" : "2.15.0"
       }
     },
     {
       "identity" : "zenea-swift",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/glasfisch3000/zenea-swift.git",
+      "location" : "https://github.com/zenea-project/zenea-swift.git",
       "state" : {
-        "branch" : "main",
-        "revision" : "37651f4d08f729e659541266474ef3ca46e20c9f"
+        "revision" : "b6da41869ed891704a20fb80b9e6d6f30fb0a47e",
+        "version" : "3.0.2"
+      }
+    },
+    {
+      "identity" : "zenea-swift-files",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/zenea-project/zenea-swift-files.git",
+      "state" : {
+        "revision" : "20fb01f8a4ab37549ebd77fac3adb32edf2791fa",
+        "version" : "1.0.0"
+      }
+    },
+    {
+      "identity" : "zenea-swift-http",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/zenea-project/zenea-swift-http.git",
+      "state" : {
+        "revision" : "476e6f231c2afdb17e10d5064a3bd748a08d4b9d",
+        "version" : "1.0.0"
       }
     }
   ],

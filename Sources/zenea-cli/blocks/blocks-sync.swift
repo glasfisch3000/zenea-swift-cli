@@ -1,11 +1,11 @@
-import zenea
+import Zenea
 
 public enum SyncError: Error, CustomStringConvertible {
     case sourceNotFound
     case destinationNotFound
     
-    case fetchError(_ error: BlockFetchError)
-    case putError(_ error: BlockPutError)
+    case fetchError(_ error: Block.FetchError)
+    case putError(_ error: Block.PutError)
     
     public var description: String {
         switch self {

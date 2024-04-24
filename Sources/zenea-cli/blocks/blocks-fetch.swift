@@ -1,6 +1,5 @@
 import AsyncHTTPClient
-
-import zenea
+import Zenea
 
 public func blocksFetch(id: Block.ID) async throws -> BlockFetchOperation {
     let client = HTTPClient(eventLoopGroupProvider: .singleton)
@@ -22,7 +21,7 @@ public class BlockFetchOperation: AsyncSequence {
         }
     }
     
-    public typealias Element = (BlockSource, Result<Block, BlockFetchError>)
+    public typealias Element = (BlockSource, Result<Block, Block.FetchError>)
     public typealias Index = Int
     
     let block: Block.ID

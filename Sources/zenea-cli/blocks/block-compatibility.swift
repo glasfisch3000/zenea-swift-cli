@@ -1,6 +1,5 @@
 import ArgumentParser
-
-import zenea
+import Zenea
 
 extension Block.ID: ExpressibleByArgument {
     public init?(argument: String) {

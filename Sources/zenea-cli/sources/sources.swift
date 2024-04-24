@@ -1,10 +1,10 @@
 import ArgumentParser
-import NIOFileSystem
 import AsyncHTTPClient
-
-import zenea
-import zenea_fs
-import zenea_http
+import NIOFileSystem
+import Zenea
+import ZeneaCache
+import ZeneaFiles
+import ZeneaHTTP
 
 public struct BlockSource {
     public enum SourceLocation {
@@ -50,12 +50,18 @@ extension BlockSource.SourceLocation: ExpressibleByArgument {
 }
 
 extension BlockSource {
-    func makeStorage(client: HTTPClient) -> BlockStorage {
+    @BlockStorageBuilder func makeStorage(client: HTTPClient) -> some BlockStorage {
         switch self.location {
         case .file(path: let path):
-            return BlockFS(path)
+            BlockFS(path)
         case .http(scheme: let scheme, domain: let domain, port: let port):
-            return ZeneaHTTPClient(scheme: scheme, address: domain, port: port, client: client)
+            ZeneaHTTPClient(scheme: scheme, address: domain, port: port, client: client)
         }
+    }
+}
+
+extension [BlockSource] {
+    @BlockStorageBuilder func makeStorage(client: HTTPClient) -> some BlockStorage {
+        BlockStorageList(sources: self.map { $0.makeStorage(client: client) })
     }
 }

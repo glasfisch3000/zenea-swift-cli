@@ -1,6 +1,5 @@
 import ArgumentParser
-
-import zenea
+import Zenea
 
 public struct ZeneaList: AsyncParsableCommand {
     public init() {}

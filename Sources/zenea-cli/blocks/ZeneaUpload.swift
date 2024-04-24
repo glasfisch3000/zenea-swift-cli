@@ -1,9 +1,8 @@
+import Foundation
 import ArgumentParser
+import AsyncHTTPClient
 import NIOFileSystem
-import Vapor
-
-import zenea
-import valya
+import Valya
 
 public struct ZeneaUpload: AsyncParsableCommand {
     public init() {}
@@ -15,7 +14,7 @@ public struct ZeneaUpload: AsyncParsableCommand {
     public mutating func run() async throws {
         let client = HTTPClient(eventLoopGroupProvider: .singleton)
         defer { try? client.shutdown().wait() }
-        let sources = try await loadStores(client: client).get()
+        let source = try await loadStores(client: client).get()
         
         let filePath = FilePath(file)
         do {
@@ -25,10 +24,13 @@ public struct ZeneaUpload: AsyncParsableCommand {
             let handle = try await FileSystem.shared.openFile(forReadingAt: filePath)
             defer { Task { try? await handle.close() } }
             
-            let fileContents = handle.readChunks()
-            let data = fileContents.map { $0.getData(at: $0.readerIndex, length: $0.readableBytes) ?? Data() }
+            var data = Data()
+            for try await chunk in handle.readChunks() {
+                guard let chunkData = chunk.getData(at: chunk.readerIndex, length: chunk.readableBytes) else { continue }
+                data += chunkData
+            }
             
-            let valyaSource = ValyaBlockWrapper(source: BlockStorageList(sources: sources))
+            let valyaSource = ValyaBlockWrapper(source: source)
             
             switch await valyaSource.putBlock(content: data) {
             case .success(let block): print(block.id.description)

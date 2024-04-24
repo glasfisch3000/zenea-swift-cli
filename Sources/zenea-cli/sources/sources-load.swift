@@ -1,8 +1,7 @@
 import Foundation
-import NIOFileSystem
 import AsyncHTTPClient
-
-import zenea
+import NIOFileSystem
+import Zenea
 
 public func loadSources() async -> Result<[BlockSource], LoadSourcesError> {
     do {
@@ -27,10 +26,12 @@ public func loadSources() async -> Result<[BlockSource], LoadSourcesError> {
     }
 }
 
-public func loadStores(client: HTTPClient) async -> Result<[BlockStorage], LoadSourcesError> {
+public func loadStores(client: HTTPClient) async -> Result<some BlockStorage, LoadSourcesError> {
     switch await loadSources() {
-    case .success(let sources): return .success(sources.map { $0.makeStorage(client: client) })
-    case .failure(let error): return .failure(error)
+    case .success(let sources):
+        .success(sources.makeStorage(client: client))
+    case .failure(let error):
+        .failure(error)
     }
 }
 

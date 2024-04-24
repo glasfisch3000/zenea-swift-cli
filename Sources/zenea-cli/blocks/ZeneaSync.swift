@@ -1,7 +1,6 @@
 import ArgumentParser
 import AsyncHTTPClient
-
-import zenea
+import Zenea
 
 public struct ZeneaSync: AsyncParsableCommand {
     public init() {}
@@ -35,7 +34,7 @@ public struct ZeneaSync: AsyncParsableCommand {
         }
         
         let store = destination.makeStorage(client: client)
-        switch await store.putBlock(data: block.content) {
+        switch await store.putBlock(block: block) {
         case .success(_): return
         case .failure(let error): throw SyncError.putError(error)
         }

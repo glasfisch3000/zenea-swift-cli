@@ -1,8 +1,6 @@
 import ArgumentParser
 import NIOFileSystem
-import Foundation
-
-import zenea
+import Zenea
 
 public struct ZeneaDownload: AsyncParsableCommand {
     public init() {}

@@ -1,6 +1,5 @@
 import AsyncHTTPClient
-
-import zenea
+import Zenea
 
 public func blocksCheck(id: Block.ID) async throws -> BlockCheckOperation {
     let client = HTTPClient(eventLoopGroupProvider: .singleton)
@@ -22,7 +21,7 @@ public class BlockCheckOperation: AsyncSequence {
         }
     }
     
-    public typealias Element = (BlockSource, Result<Bool, BlockCheckError>)
+    public typealias Element = (BlockSource, Result<Bool, Block.CheckError>)
     public typealias Index = Int
     
     let block: Block.ID
