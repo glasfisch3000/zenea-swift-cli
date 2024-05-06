@@ -1,4 +1,5 @@
 import ArgumentParser
+import AsyncHTTPClient
 import Zenea
 
 public struct ZeneaList: AsyncParsableCommand {
@@ -7,32 +8,107 @@ public struct ZeneaList: AsyncParsableCommand {
     public static var configuration: CommandConfiguration = .init(commandName: "list", abstract: "List available Zenea blocks.", usage: "", discussion: "", version: "", shouldDisplay: true, subcommands: [], defaultSubcommand: nil, helpNames: nil)
     
     @Flag(name: [.customShort("s"), .customLong("print-sources")], help: "Show the lists for each block source.") public var printSources = false
+    @Flag(name: [.customShort("S"), .customLong("sort")], help: "List the blocks in a sorted order.") public var sortBlocks: Bool = false
     
     public mutating func run() async throws {
+        let client = HTTPClient(eventLoopGroupProvider: .singleton)
+        defer { try? client.shutdown().wait() }
+        
         if printSources {
-            for await (source, result) in try await blocksList() {
-                print(source.name, terminator: " -> ")
-                
-                switch result {
-                case .success(let blocks):
-                    print()
-                    for block in blocks.sorted(by: { $0.description < $1.description }) {
-                        print("    " + block.description)
-                    }
-                case .failure(.unable): print("Error.")
-                }
-            }
+            if sortBlocks { try await printSortedBySource(client: client) }
+            else { try await printUnsortedBySource(client: client) }
         } else {
-            var results: Set<Block.ID> = []
-            
-            for await (_, result) in try await blocksList() {
-                guard let blocks = try? result.get() else { continue }
-                results.formUnion(blocks)
-            }
-            
-            for block in results.sorted(by: { $0.description < $1.description }) {
-                print(block.description)
+            if sortBlocks { try await printSorted(client: client) }
+            else { try await printUnsorted(client: client) }
+        }
+    }
+    
+    func printSorted(client: HTTPClient) async throws {
+        let sources = try await loadSources().get()
+        let storages = sources.map { $0.makeStorage(client: client) }
+        
+        var results: Set<Block.ID> = []
+        
+        for storage in storages {
+            do {
+                let list = try await storage.listBlocks().get()
+                results.formUnion(list)
+            } catch {
+                print("Error: \(error)")
+                continue
             }
         }
+        
+        for block in results.sorted(by: { $0.description < $1.description }) {
+            print(block.description)
+        }
+    }
+    
+    func printUnsorted(client: HTTPClient) async throws {
+        let sources = try await loadSources().get()
+        let storages = sources.map { $0.makeStorage(client: client) }
+        
+        var errors: [Error] = []
+        
+        for storage in storages {
+            do {
+                for blockID in try await storage.listBlocks().get() {
+                    print(blockID.description)
+                }
+            } catch {
+                errors += [error]
+                continue
+            }
+        }
+        
+        for error in errors {
+            print(error)
+        }
+    }
+    
+    func printSortedBySource(client: HTTPClient) async throws {
+        let sources = try await loadSources().get()
+        for source in sources {
+            print(source.name, terminator: " ->")
+            
+            do {
+                let storage = source.makeStorage(client: client)
+                let list = try await storage.listBlocks().get()
+                
+                print()
+                for block in list {
+                    print("    " + block.description)
+                }
+            } catch {
+                print(" Error: \(error)")
+            }
+        }
+    }
+    
+    func printUnsortedBySource(client: HTTPClient) async throws {
+        let sources = try await loadSources().get()
+        for source in sources {
+            print(source.name, terminator: " ->")
+            
+            do {
+                let storage = source.makeStorage(client: client)
+                let list = try await storage.listBlocks().get()
+                
+                print()
+                for block in list.sorted(by: { $0.description < $1.description }) {
+                    print("    " + block.description)
+                }
+            } catch {
+                print(" Error: \(error)")
+            }
+        }
+    }
+}
+
+enum CustomError: String, Error, CustomStringConvertible {
+    case lol = "custom error message"
+    
+    var description: String {
+        self.rawValue
     }
 }
