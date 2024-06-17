@@ -4,7 +4,7 @@ import Zenea
 public struct ZeneaFetch: AsyncParsableCommand {
     public init() {}
     
-    public static var configuration: CommandConfiguration = .init(commandName: "fetch", abstract: "Fetch Zenea blocks.", usage: "", discussion: "", version: "", shouldDisplay: true, subcommands: [], defaultSubcommand: nil, helpNames: nil)
+    public static var configuration: CommandConfiguration = .init(commandName: "fetch", abstract: "Fetch Zenea blocks.", usage: nil, discussion: "", version: "", shouldDisplay: true, subcommands: [], defaultSubcommand: nil, helpNames: nil)
     
     @Option(name: .shortAndLong, help: "Specify formatting of the block's content. One of raw|hex|base64, default is raw.") public var format: Block.DataFormat = .raw
     @Flag(name: [.customShort("s"), .customLong("print-source")], help: "Show which source the block was fetched from.") public var printSource = false

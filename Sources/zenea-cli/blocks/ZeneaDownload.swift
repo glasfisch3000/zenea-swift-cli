@@ -5,7 +5,7 @@ import Zenea
 public struct ZeneaDownload: AsyncParsableCommand {
     public init() {}
     
-    public static var configuration: CommandConfiguration = .init(commandName: "download", abstract: "Download Valya block files.", usage: "", discussion: "", version: "", shouldDisplay: true, subcommands: [], defaultSubcommand: nil, helpNames: nil)
+    public static var configuration: CommandConfiguration = .init(commandName: "download", abstract: "Download Valya block files.", usage: nil, discussion: "", version: "", shouldDisplay: true, subcommands: [], defaultSubcommand: nil, helpNames: nil)
     
     @ArgumentParser.Argument public var blockID: Block.ID
     @ArgumentParser.Argument(completion: .file()) public var file: String

@@ -3,7 +3,7 @@ import ArgumentParser
 public struct ZeneaSourcesEnable: AsyncParsableCommand {
     public init() {}
     
-    public static var configuration: CommandConfiguration = .init(commandName: "enable", abstract: "Enable or disable a Zenea block source.", usage: "", discussion: "", version: "", shouldDisplay: true, subcommands: [], defaultSubcommand: nil, helpNames: nil)
+    public static var configuration: CommandConfiguration = .init(commandName: "enable", abstract: "Enable or disable a Zenea block source.", usage: nil, discussion: "", version: "", shouldDisplay: true, subcommands: [], defaultSubcommand: nil, helpNames: nil)
     
     @Argument var source: String
     @Option(name: [.customLong("enabled", withSingleDash: true)]) var enabled: Bool = true

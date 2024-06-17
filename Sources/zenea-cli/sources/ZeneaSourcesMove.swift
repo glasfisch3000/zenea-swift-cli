@@ -3,7 +3,7 @@ import ArgumentParser
 public struct ZeneaSourcesMove: AsyncParsableCommand {
     public init() {}
     
-    public static var configuration: CommandConfiguration = .init(commandName: "move", abstract: "Move a Zenea block source up or down the list.", usage: "", discussion: "", version: "", shouldDisplay: true, subcommands: [], defaultSubcommand: nil, helpNames: nil)
+    public static var configuration: CommandConfiguration = .init(commandName: "move", abstract: "Move a Zenea block source up or down the list.", usage: nil, discussion: "", version: "", shouldDisplay: true, subcommands: [], defaultSubcommand: nil, helpNames: nil)
     
     @Argument(help: "The name of the source to move.") var name: String
     @Argument(help: "The source's new index, starting at 1.") var newIndex: Int
