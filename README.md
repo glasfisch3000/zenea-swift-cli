@@ -2,8 +2,8 @@
 
 A swift client command line interface for interacting with Zenea Project Data Layer block storage systems.
 
-Built on [swift-argument-parser](https://github.com/apple/swift-argument-parser) and [zenea-swift](https://github.com/glasfisch3000/zenea-swift).
-Utilises [async-http-client](https://github.com/swift-server/async-http-client) as well as [swift-nio's](https://github.com/apple/swift-nio) `NIOFileSystem`.
+Built with [swift-argument-parser](https://github.com/apple/swift-argument-parser) on top of [Zenea Project](https://github.com/zenea-project)'s zenea and valya libraries.
+Utilises [async-http-client](https://github.com/swift-server/async-http-client) for communicating with web interfaces as well as [swift-nio's](https://github.com/apple/swift-nio) `NIOFileSystem` for local data storage.
 
 # How to Use
 
@@ -28,14 +28,18 @@ Blocks can be encoded or decoded in one of three formats: `raw`, `hex` and `base
 
 - list blocks available for download: `zenea list [--print-sources]`
 - check a block's availability: `zenea check <block-id>`
-- download a block: `zenea fetch [-f <format>] [--print-source] <block-id>`
-- upload a block: `zenea put [-f <format>] <block-content>`
+- print a block's contents: `zenea fetch [-f <format>] [--print-source] <block-id>`
+- download a block's contents to the file system, valya-decompressing if possible: `zenea download <block-id> <destination-file>`
+- put data into a block: `zenea put [-f <format>] <block-content>`
+- upload a block from file, valya-compressing if needed: `zenea upload <source-file>`
 - synchronise a block from one source to another: `zenea sync [-s <source>] <block> <destination>`
 
 ### Block Sources
 - list available block sources: `zenea sources list`
-- reset/initialise block sources: `zenea sources reset`
+- get info about a block source: `zenea sources info <name>`
 - add block source: `zenea sources add <name> <location>`
-- move a block source up or down the list: `zenea sources move <name> <new-index>`
 - rename a block source: `zenea sources rename <old-name> <new-name>`
+- enable/disable a block source: `zenea sources enable [--enabled <bool>] <name>` or `zenea sources disable <name>`
+- move a block source up or down the list: `zenea sources move <name> <new-index>`
 - remove block source: `zenea sources remove <name>`
+- reset/initialise block sources: `zenea sources reset`
