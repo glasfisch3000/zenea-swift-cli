@@ -5,7 +5,7 @@ public func blocksCheck(id: Block.ID) async throws -> BlockCheckOperation {
     let client = HTTPClient(eventLoopGroupProvider: .singleton)
     
     let sources = try await loadSources().get()
-    return BlockCheckOperation(block: id, sources: sources, client: client)
+    return BlockCheckOperation(block: id, sources: sources.filter(\.isEnabled), client: client)
 }
 
 public class BlockCheckOperation: AsyncSequence {

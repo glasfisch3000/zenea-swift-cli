@@ -13,6 +13,7 @@ public struct BlockSource {
     }
     
     var name: String
+    var isEnabled: Bool = true
     var location: SourceLocation
 }
 

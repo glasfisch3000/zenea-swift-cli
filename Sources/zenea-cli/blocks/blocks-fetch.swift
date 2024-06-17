@@ -5,7 +5,7 @@ public func blocksFetch(id: Block.ID) async throws -> BlockFetchOperation {
     let client = HTTPClient(eventLoopGroupProvider: .singleton)
     
     let sources = try await loadSources().get()
-    return BlockFetchOperation(block: id, sources: sources, client: client)
+    return BlockFetchOperation(block: id, sources: sources.filter(\.isEnabled), client: client)
 }
 
 public class BlockFetchOperation: AsyncSequence {

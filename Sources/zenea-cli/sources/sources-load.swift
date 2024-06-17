@@ -29,7 +29,7 @@ public func loadSources() async -> Result<[BlockSource], LoadSourcesError> {
 public func loadStores(client: HTTPClient) async -> Result<some BlockStorage, LoadSourcesError> {
     switch await loadSources() {
     case .success(let sources):
-        .success(sources.makeStorage(client: client))
+        .success(sources.filter(\.isEnabled).makeStorage(client: client))
     case .failure(let error):
         .failure(error)
     }

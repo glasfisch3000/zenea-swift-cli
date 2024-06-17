@@ -9,7 +9,7 @@ public struct ZeneaSourcesList: AsyncParsableCommand {
         let sources = try await loadSources().get()
         
         for source in sources {
-            print("\(source.name): \(source.location.description)")
+            print("\(source.name) [\(source.isEnabled ? "enabled" : "disabled")]: \(source.location.description)")
         }
     }
 }

@@ -6,7 +6,7 @@ public func blocksPut(_ content: Data) async throws -> BlockPutOperation {
     let client = HTTPClient(eventLoopGroupProvider: .singleton)
     
     let sources = try await loadSources().get()
-    return BlockPutOperation(block: content, sources: sources, client: client)
+    return BlockPutOperation(block: content, sources: sources.filter(\.isEnabled), client: client)
 }
 
 public class BlockPutOperation: AsyncSequence {

@@ -25,7 +25,7 @@ public struct ZeneaList: AsyncParsableCommand {
     
     func printSorted(client: HTTPClient) async throws {
         let sources = try await loadSources().get()
-        let storages = sources.map { $0.makeStorage(client: client) }
+        let storages = sources.filter(\.isEnabled).map { $0.makeStorage(client: client) }
         
         var results: Set<Block.ID> = []
         
@@ -46,7 +46,7 @@ public struct ZeneaList: AsyncParsableCommand {
     
     func printUnsorted(client: HTTPClient) async throws {
         let sources = try await loadSources().get()
-        let storages = sources.map { $0.makeStorage(client: client) }
+        let storages = sources.filter(\.isEnabled).map { $0.makeStorage(client: client) }
         
         var errors: [Error] = []
         
@@ -68,7 +68,7 @@ public struct ZeneaList: AsyncParsableCommand {
     
     func printSortedBySource(client: HTTPClient) async throws {
         let sources = try await loadSources().get()
-        for source in sources {
+        for source in sources.filter(\.isEnabled) {
             print(source.name, terminator: " ->")
             
             do {
@@ -91,7 +91,7 @@ public struct ZeneaList: AsyncParsableCommand {
     
     func printUnsortedBySource(client: HTTPClient) async throws {
         let sources = try await loadSources().get()
-        for source in sources {
+        for source in sources.filter(\.isEnabled) {
             print(source.name, terminator: " ->")
             
             do {

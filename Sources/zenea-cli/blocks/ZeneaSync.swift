@@ -15,6 +15,7 @@ public struct ZeneaSync: AsyncParsableCommand {
     public mutating func run() async throws {
         let sources = try await loadSources().get()
         guard let destination = sources.first(where: { $0.name == self.destination }) else { throw SyncError.destinationNotFound }
+        guard destination.isEnabled else { throw SyncError.destinationDisabled }
         
         let client = HTTPClient(eventLoopGroupProvider: .singleton)
         defer { Task { try? await client.shutdown().get() } }
@@ -23,6 +24,7 @@ public struct ZeneaSync: AsyncParsableCommand {
         
         if let source = source {
             guard let source = sources.first(where: { $0.name == source }) else { throw SyncError.sourceNotFound }
+            guard source.isEnabled else { throw SyncError.sourceDisabled }
             let store = source.makeStorage(client: client)
             
             switch await store.fetchBlock(id: self.blockID) {
