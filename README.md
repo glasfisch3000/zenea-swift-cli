@@ -26,7 +26,7 @@ NOTE: This package may not work on systems that do not provide an adequate `Foun
 ### Blocks
 Blocks can be encoded or decoded in one of three formats: `raw`, `hex` and `base64`. The default value is `raw`.
 
-- list blocks available for download: `zenea list [--print-sources]`
+- list blocks available for download: `zenea list [--print-sources] [--sort]`
 - check a block's availability: `zenea check <block-id>`
 - print a block's contents: `zenea fetch [-f <format>] [--print-source] <block-id>`
 - download a block's contents to the file system, valya-decompressing if possible: `zenea download <block-id> <destination-file>`
