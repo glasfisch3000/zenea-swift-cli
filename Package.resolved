@@ -32,8 +32,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/glasfisch3000/fastcdc-swift.git",
       "state" : {
-        "revision" : "b51bfb93eeb9a39b71b41fa6850a005ec4a51b2c",
-        "version" : "3.0.1"
+        "revision" : "7f27f7b645e8deaebe9f1d62e19da64363295349",
+        "version" : "3.0.3"
       }
     },
     {
@@ -194,8 +194,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/zenea-project/valya-swift.git",
       "state" : {
-        "revision" : "88c94dd7bab55e932c3cff93e9269056974920cf",
-        "version" : "1.0.1"
+        "revision" : "99f6ad7c231f7aa1ffc976cf60b47e086cff747b",
+        "version" : "1.0.3"
       }
     },
     {

@@ -18,7 +18,7 @@ let package = Package(
         .package(url: "https://github.com/zenea-project/zenea-swift.git", from: "3.0.2"),
         .package(url: "https://github.com/zenea-project/zenea-swift-files.git", from: "1.0.0"),
         .package(url: "https://github.com/zenea-project/zenea-swift-http.git", from: "1.0.0"),
-        .package(url: "https://github.com/zenea-project/valya-swift.git", from: "1.0.1"),
+        .package(url: "https://github.com/zenea-project/valya-swift.git", from: "1.0.3"),
     ],
     targets: [
         .executableTarget(
