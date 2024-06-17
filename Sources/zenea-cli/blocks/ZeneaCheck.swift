@@ -4,7 +4,7 @@ import Zenea
 public struct ZeneaCheck: AsyncParsableCommand {
     public init() {}
     
-    public static var configuration: CommandConfiguration = .init(commandName: "check", abstract: "Check availability of Zenea blocks.", usage: nil, discussion: "", version: "", shouldDisplay: true, subcommands: [], defaultSubcommand: nil, helpNames: nil)
+    public static var configuration: CommandConfiguration = .init(commandName: "check", abstract: "Check availability of Zenea blocks.", usage: nil, discussion: "", version: "1.0.0", shouldDisplay: true, subcommands: [], defaultSubcommand: nil, helpNames: nil)
     
     @ArgumentParser.Argument public var blockID: Block.ID
     

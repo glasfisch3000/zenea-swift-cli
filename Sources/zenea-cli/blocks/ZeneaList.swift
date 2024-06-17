@@ -5,7 +5,7 @@ import Zenea
 public struct ZeneaList: AsyncParsableCommand {
     public init() {}
     
-    public static var configuration: CommandConfiguration = .init(commandName: "list", abstract: "List available Zenea blocks.", usage: nil, discussion: "", version: "", shouldDisplay: true, subcommands: [], defaultSubcommand: nil, helpNames: nil)
+    public static var configuration: CommandConfiguration = .init(commandName: "list", abstract: "List available Zenea blocks.", usage: nil, discussion: "", version: "1.0.0", shouldDisplay: true, subcommands: [], defaultSubcommand: nil, helpNames: nil)
     
     @Flag(name: [.customShort("s"), .customLong("print-sources")], help: "Show the lists for each block source.") public var printSources = false
     @Flag(name: [.customShort("S"), .customLong("sort")], help: "List the blocks in a sorted order.") public var sortBlocks: Bool = false

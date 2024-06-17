@@ -3,7 +3,7 @@ import ArgumentParser
 public struct ZeneaSourcesRename: AsyncParsableCommand {
     public init() {}
     
-    public static var configuration: CommandConfiguration = .init(commandName: "rename", abstract: "Rename a Zenea block source.", usage: nil, discussion: "", version: "", shouldDisplay: true, subcommands: [], defaultSubcommand: nil, helpNames: nil)
+    public static var configuration: CommandConfiguration = .init(commandName: "rename", abstract: "Rename a Zenea block source.", usage: nil, discussion: "", version: "1.0.0", shouldDisplay: true, subcommands: [], defaultSubcommand: nil, helpNames: nil)
     
     @Argument var oldName: String
     @Argument var newName: String

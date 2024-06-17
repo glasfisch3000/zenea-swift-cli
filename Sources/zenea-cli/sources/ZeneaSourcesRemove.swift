@@ -3,7 +3,7 @@ import ArgumentParser
 public struct ZeneaSourcesRemove: AsyncParsableCommand {
     public init() {}
     
-    public static var configuration: CommandConfiguration = .init(commandName: "remove", abstract: "Remove a Zenea block source.", usage: nil, discussion: "", version: "", shouldDisplay: true, subcommands: [], defaultSubcommand: nil, helpNames: nil)
+    public static var configuration: CommandConfiguration = .init(commandName: "remove", abstract: "Remove a Zenea block source.", usage: nil, discussion: "", version: "1.0.0", shouldDisplay: true, subcommands: [], defaultSubcommand: nil, helpNames: nil)
     
     @Argument var source: String
     

@@ -3,7 +3,7 @@ import ArgumentParser
 public struct ZeneaSourcesInfo: AsyncParsableCommand {
     public init() {}
     
-    public static var configuration: CommandConfiguration = .init(commandName: "info", abstract: "Get information about a Zenea block source.", usage: nil, discussion: "", version: "", shouldDisplay: true, subcommands: [], defaultSubcommand: nil, helpNames: nil)
+    public static var configuration: CommandConfiguration = .init(commandName: "info", abstract: "Get information about a Zenea block source.", usage: nil, discussion: "", version: "1.0.0", shouldDisplay: true, subcommands: [], defaultSubcommand: nil, helpNames: nil)
     
     @Argument var source: String
     

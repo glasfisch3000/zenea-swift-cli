@@ -4,7 +4,7 @@ import Zenea
 public struct ZeneaPut: AsyncParsableCommand {
     public init() {}
     
-    public static var configuration: CommandConfiguration = .init(commandName: "put", abstract: "Upload Zenea blocks.", usage: nil, discussion: "", version: "", shouldDisplay: true, subcommands: [], defaultSubcommand: nil, helpNames: nil)
+    public static var configuration: CommandConfiguration = .init(commandName: "put", abstract: "Upload Zenea blocks.", usage: nil, discussion: "", version: "1.0.0", shouldDisplay: true, subcommands: [], defaultSubcommand: nil, helpNames: nil)
     
     @Option(name: .shortAndLong) public var format: Block.DataFormat = .raw
     
