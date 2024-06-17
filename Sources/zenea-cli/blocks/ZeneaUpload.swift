@@ -9,9 +9,12 @@ public struct ZeneaUpload: AsyncParsableCommand {
     
     public static var configuration: CommandConfiguration = .init(commandName: "upload", abstract: "Upload Valya block files.", usage: "", discussion: "", version: "", shouldDisplay: true, subcommands: [], defaultSubcommand: nil, helpNames: nil)
     
+    @ArgumentParser.Flag(name: [.long]) public var debug: Bool = false
     @ArgumentParser.Argument(completion: .file()) public var file: String
     
     public mutating func run() async throws {
+        let time0 = Date()
+        
         let client = HTTPClient(eventLoopGroupProvider: .singleton)
         defer { try? client.shutdown().wait() }
         let source = try await loadStores(client: client).get()
@@ -32,13 +35,24 @@ public struct ZeneaUpload: AsyncParsableCommand {
             
             let valyaSource = ValyaBlockWrapper(source: source)
             
-            switch await valyaSource.putBlock(content: data) {
-            case .success(let block): print(block.id.description)
-            case .failure(.overflow): print("Error: too large.")
-            case .failure(.exists(let block)): print("Error: block \(block.id.description) exists.")
-            case .failure(.notPermitted): print("Error: not permitted.")
-            case .failure(.unavailable): print("Error: unavailable.")
-            case .failure(.unable): print("Error: unable.")
+            let time1 = Date()
+            
+            let result = await valyaSource.putBlock(content: data)
+            let time2 = Date()
+            
+            let outputString: String = switch result {
+            case .success(let block): block.id.description
+            case .failure(.overflow): "Error: too large."
+            case .failure(.exists(let block)): "Error: block \(block.id.description) exists."
+            case .failure(.notPermitted): "Error: not permitted."
+            case .failure(.unavailable): "Error: unavailable."
+            case .failure(.unable): "Error: unable."
+            }
+            
+            if debug {
+                print("\(outputString); \(data.count); \(time2.timeIntervalSince(time1)); \(time2.timeIntervalSince(time0))")
+            } else {
+                print(outputString)
             }
         } catch let error as FileSystemError where error.code == .notFound {
             throw UploadError.fileNotFound
