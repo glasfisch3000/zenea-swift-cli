@@ -8,8 +8,10 @@ public struct ZeneaSourcesList: AsyncParsableCommand {
     public func run() async throws {
         let sources = try await loadSources().get()
         
+        var i = 1
         for source in sources {
-            print("\(source.name) [\(source.isEnabled ? "enabled" : "disabled")]: \(source.location.description)")
+            print("\(i). \(source.name) [\(source.isEnabled ? "enabled" : "disabled")]: \(source.location.description)")
+            i += 1
         }
     }
 }
