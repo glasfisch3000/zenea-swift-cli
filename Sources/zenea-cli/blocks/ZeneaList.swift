@@ -75,9 +75,13 @@ public struct ZeneaList: AsyncParsableCommand {
                 let storage = source.makeStorage(client: client)
                 let list = try await storage.listBlocks().get()
                 
-                print()
-                for block in list {
-                    print("    " + block.description)
+                if list.isEmpty {
+                    print(" None")
+                } else {
+                    print()
+                    for block in list {
+                        print("    " + block.description)
+                    }
                 }
             } catch {
                 print(" Error: \(error)")
@@ -94,9 +98,13 @@ public struct ZeneaList: AsyncParsableCommand {
                 let storage = source.makeStorage(client: client)
                 let list = try await storage.listBlocks().get()
                 
-                print()
-                for block in list.sorted(by: { $0.description < $1.description }) {
-                    print("    " + block.description)
+                if list.isEmpty {
+                    print(" None")
+                } else {
+                    print()
+                    for block in list.sorted(by: { $0.description < $1.description }) {
+                        print("    " + block.description)
+                    }
                 }
             } catch {
                 print(" Error: \(error)")
