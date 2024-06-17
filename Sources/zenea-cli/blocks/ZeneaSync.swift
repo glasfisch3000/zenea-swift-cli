@@ -7,7 +7,7 @@ public struct ZeneaSync: AsyncParsableCommand {
     
     public static var configuration: CommandConfiguration = .init(commandName: "sync", abstract: "Synchronise Zenea blocks between block sources.", usage: "", discussion: "", version: "", shouldDisplay: true, subcommands: [], defaultSubcommand: nil, helpNames: nil)
     
-    @Option(name: [.customShort("S"), .long]) public var source: String?
+    @Option(name: [.customShort("s"), .long]) public var source: String?
     
     @ArgumentParser.Argument public var blockID: Block.ID
     @ArgumentParser.Argument public var destination: String
