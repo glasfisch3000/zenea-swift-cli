@@ -8,7 +8,17 @@ import Valya
 public struct ZeneaUpload: AsyncParsableCommand {
     public init() {}
     
-    public static var configuration: CommandConfiguration = .init(commandName: "upload", abstract: "Upload Valya block files.", usage: nil, discussion: "", version: "1.1.0", shouldDisplay: true, subcommands: [], defaultSubcommand: nil, helpNames: nil)
+    public static var configuration: CommandConfiguration = .init(
+        commandName: "upload",
+        abstract: "Upload Valya block files.",
+        usage: nil,
+        discussion: "",
+        version: "1.1.0",
+        shouldDisplay: true,
+        subcommands: [],
+        defaultSubcommand: nil,
+        helpNames: nil
+    )
     
     @ArgumentParser.Flag(name: [.long]) public var debug: Bool = false
     @ArgumentParser.Argument(help: .init(valueName: "file"), completion: .file()) public var files: [String]

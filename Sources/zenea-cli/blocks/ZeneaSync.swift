@@ -5,7 +5,17 @@ import Zenea
 public struct ZeneaSync: AsyncParsableCommand {
     public init() {}
     
-    public static var configuration: CommandConfiguration = .init(commandName: "sync", abstract: "Synchronise Zenea blocks between block sources.", usage: nil, discussion: "", version: "1.0.0", shouldDisplay: true, subcommands: [], defaultSubcommand: nil, helpNames: nil)
+    public static var configuration: CommandConfiguration = .init(
+        commandName: "sync",
+        abstract: "Synchronise Zenea blocks between block sources.",
+        usage: nil,
+        discussion: "",
+        version: "1.0.0",
+        shouldDisplay: true,
+        subcommands: [],
+        defaultSubcommand: nil,
+        helpNames: nil
+    )
     
     @Option(name: [.customShort("s"), .long]) public var source: String?
     
