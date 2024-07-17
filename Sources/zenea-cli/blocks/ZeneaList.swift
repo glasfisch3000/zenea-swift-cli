@@ -79,7 +79,7 @@ public struct ZeneaList: AsyncParsableCommand {
                     print(" None")
                 } else {
                     print()
-                    for block in list {
+                    for block in list.sorted(by: { $0.description < $1.description }) {
                         print("    " + block.description)
                     }
                 }
@@ -102,7 +102,7 @@ public struct ZeneaList: AsyncParsableCommand {
                     print(" None")
                 } else {
                     print()
-                    for block in list.sorted(by: { $0.description < $1.description }) {
+                    for block in list {
                         print("    " + block.description)
                     }
                 }
