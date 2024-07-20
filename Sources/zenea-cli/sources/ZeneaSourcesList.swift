@@ -12,7 +12,8 @@ public struct ZeneaSourcesList: AsyncParsableCommand {
         shouldDisplay: true,
         subcommands: [],
         defaultSubcommand: nil,
-        helpNames: nil
+        helpNames: nil,
+        aliases: ["ls"]
     )
     
     public func run() async throws {

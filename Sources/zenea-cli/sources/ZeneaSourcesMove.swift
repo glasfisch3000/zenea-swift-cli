@@ -12,7 +12,8 @@ public struct ZeneaSourcesMove: AsyncParsableCommand {
         shouldDisplay: true,
         subcommands: [],
         defaultSubcommand: nil,
-        helpNames: nil
+        helpNames: nil,
+        aliases: []
     )
     
     @Argument(help: "The name of the source to move.") var name: String

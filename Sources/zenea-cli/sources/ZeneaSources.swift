@@ -12,6 +12,7 @@ public struct ZeneaSources: AsyncParsableCommand {
         shouldDisplay: true,
         subcommands: [ZeneaSourcesList.self, ZeneaSourcesInfo.self, ZeneaSourcesAdd.self, ZeneaSourcesRename.self, ZeneaSourcesEnable.self, ZeneaSourcesDisable.self, ZeneaSourcesMove.self, ZeneaSourcesRemove.self, ZeneaSourcesReset.self],
         defaultSubcommand: nil,
-        helpNames: nil
+        helpNames: nil,
+        aliases: []
     )
 }

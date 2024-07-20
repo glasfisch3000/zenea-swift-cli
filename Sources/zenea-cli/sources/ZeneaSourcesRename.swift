@@ -12,7 +12,8 @@ public struct ZeneaSourcesRename: AsyncParsableCommand {
         shouldDisplay: true,
         subcommands: [],
         defaultSubcommand: nil,
-        helpNames: nil
+        helpNames: nil,
+        aliases: []
     )
     
     @Argument var oldName: String

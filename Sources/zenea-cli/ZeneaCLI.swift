@@ -11,6 +11,7 @@ struct ZeneaCLI: AsyncParsableCommand {
         shouldDisplay: true,
         subcommands: [ZeneaList.self, ZeneaCheck.self, ZeneaFetch.self, ZeneaPut.self, ZeneaSync.self, ZeneaDownload.self, ZeneaUpload.self, ZeneaSources.self],
         defaultSubcommand: nil,
-        helpNames: nil
+        helpNames: nil,
+        aliases: []
     )
 }

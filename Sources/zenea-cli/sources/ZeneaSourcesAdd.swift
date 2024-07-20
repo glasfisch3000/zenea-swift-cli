@@ -12,7 +12,8 @@ public struct ZeneaSourcesAdd: AsyncParsableCommand {
         shouldDisplay: true,
         subcommands: [],
         defaultSubcommand: nil,
-        helpNames: nil
+        helpNames: nil,
+        aliases: []
     )
     
     @Argument(help: "The source's identifier.") var name: String

@@ -12,7 +12,8 @@ public struct ZeneaSourcesEnable: AsyncParsableCommand {
         shouldDisplay: true,
         subcommands: [],
         defaultSubcommand: nil,
-        helpNames: nil
+        helpNames: nil,
+        aliases: []
     )
     
     @Argument var source: String
@@ -31,7 +32,18 @@ public struct ZeneaSourcesEnable: AsyncParsableCommand {
 public struct ZeneaSourcesDisable: AsyncParsableCommand {
     public init() {}
     
-    public static var configuration: CommandConfiguration = .init(commandName: "disable", abstract: "Disable a Zenea block source.", usage: "", discussion: "", version: "", shouldDisplay: true, subcommands: [], defaultSubcommand: nil, helpNames: nil)
+    public static var configuration: CommandConfiguration = .init(
+        commandName: "disable",
+        abstract: "Disable a Zenea block source.",
+        usage: "", 
+        discussion: "",
+        version: "",
+        shouldDisplay: true,
+        subcommands: [],
+        defaultSubcommand: nil,
+        helpNames: nil,
+        aliases: []
+    )
     
     @Argument var source: String
     

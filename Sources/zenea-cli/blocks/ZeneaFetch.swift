@@ -13,7 +13,8 @@ public struct ZeneaFetch: AsyncParsableCommand {
         shouldDisplay: true,
         subcommands: [],
         defaultSubcommand: nil,
-        helpNames: nil
+        helpNames: nil,
+        aliases: []
     )
     
     @Option(name: .shortAndLong, help: "Specify formatting of the block's content. One of raw|hex|base64, default is raw.") public var format: Block.DataFormat = .raw

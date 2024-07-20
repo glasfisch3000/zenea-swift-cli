@@ -1,8 +1,32 @@
+import Foundation
 import ArgumentParser
 import AsyncHTTPClient
+import ConsoleKit
 import Zenea
 
 public struct ZeneaList: AsyncParsableCommand {
+    public enum DebugOutputMode: EnumerableFlag, Hashable, Sendable, Codable {
+        case silent
+        case normal
+        case verbose
+        
+        public static func name(for value: ZeneaList.DebugOutputMode) -> NameSpecification {
+            switch value {
+            case .silent: .long
+            case .normal: .customLong("debug")
+            case .verbose: [.short, .long]
+            }
+        }
+        
+        public static func help(for value: ZeneaList.DebugOutputMode) -> ArgumentHelp? {
+            switch value {
+            case .silent: "Disable debug output."
+            case .normal: "Normal debug output mode."
+            case .verbose: "Enable verbose debug output."
+            }
+        }
+    }
+    
     public init() {}
     
     public static var configuration: CommandConfiguration = .init(
@@ -10,123 +34,137 @@ public struct ZeneaList: AsyncParsableCommand {
         abstract: "List available Zenea blocks.",
         usage: nil,
         discussion: "", 
-        version: "1.0.1",
-        shouldDisplay: true, 
+        version: "2.0.0",
+        shouldDisplay: true,
         subcommands: [],
         defaultSubcommand: nil,
-        helpNames: nil
+        helpNames: nil,
+        aliases: ["ls"]
     )
     
-    @Flag(name: [.customShort("s"), .customLong("print-sources")], help: "Show the lists for each block source.") public var printSources = false
-    @Flag(name: [.customShort("S"), .customLong("sort")], help: "List the blocks in a sorted order.") public var sortBlocks: Bool = false
+    @ArgumentParser.Flag(name: [.customShort("s"), .customLong("print-sources")], help: "Show the lists for each block source.") public var printSources = false
+    
+    @ArgumentParser.Flag(exclusivity: .chooseLast) var debugOutputMode: DebugOutputMode = .normal
     
     public mutating func run() async throws {
         let client = HTTPClient(eventLoopGroupProvider: .singleton)
         defer { try? client.shutdown().wait() }
         
-        if printSources {
-            if sortBlocks { try await printSortedBySource(client: client) }
-            else { try await printUnsortedBySource(client: client) }
-        } else {
-            if sortBlocks { try await printSorted(client: client) }
-            else { try await printUnsorted(client: client) }
-        }
+        try await printBlocks(client: client)
     }
     
-    func printSorted(client: HTTPClient) async throws {
-        let sources = try await loadSources().get()
-        let storages = sources.filter(\.isEnabled).map { $0.makeStorage(client: client) }
+    func printBlocks(client: HTTPClient) async throws {
+        let silent = debugOutputMode == .silent
+        let verbose = debugOutputMode == .verbose
         
-        var results: Set<Block.ID> = []
+        let terminal = Terminal()
+        var progressBar = !silent ? terminal.progressBar(title: "loading block sources", targetQueue: .main) : nil
+        progressBar?.start()
         
-        for storage in storages {
-            do {
-                let list = try await storage.listBlocks().get()
-                results.formUnion(list)
-            } catch {
-                print("Error: \(error)")
-                continue
-            }
-        }
-        
-        for block in results.sorted(by: { $0.description < $1.description }) {
-            print(block.description)
-        }
-    }
-    
-    func printUnsorted(client: HTTPClient) async throws {
-        let sources = try await loadSources().get()
-        let storages = sources.filter(\.isEnabled).map { $0.makeStorage(client: client) }
-        
-        var errors: [Error] = []
-        
-        for storage in storages {
-            do {
-                for blockID in try await storage.listBlocks().get() {
-                    print(blockID.description)
-                }
-            } catch {
-                errors += [error]
-                continue
-            }
-        }
-        
-        for error in errors {
-            print(error)
-        }
-    }
-    
-    func printSortedBySource(client: HTTPClient) async throws {
-        let sources = try await loadSources().get()
-        for source in sources.filter(\.isEnabled) {
-            print(source.name, terminator: " ->")
+        do {
+            let sources = try await loadSources().get().filter { $0.isEnabled }.map { ($0, $0.makeStorage(client: client)) }
             
-            do {
-                let storage = source.makeStorage(client: client)
-                let list = try await storage.listBlocks().get()
+            try await withThrowingTaskGroup(of: (String, Result<Set<Block.ID>, Block.ListError>).self) { group in
+                for (source, storage) in sources {
+                    group.addTask { (source.name, await storage.listBlocks()) }
+                }
                 
-                if list.isEmpty {
-                    print(" None")
-                } else {
-                    print()
-                    for block in list.sorted(by: { $0.description < $1.description }) {
-                        print("    " + block.description)
+                var sourcesLoaded: [String] = []
+                var errors: [(String, Block.ListError)] = []
+                
+                func progressBarTitle() -> String {
+                    switch sourcesLoaded.count {
+                    case sources.count: "loading blocks"
+                    case sources.count-1: "loading blocks from \(sources.filter { !sourcesLoaded.contains($0.0.name) }.map(\.0.name).joined(separator: ", "))"
+                    default: "loading blocks from \(sources.count - sourcesLoaded.count) sources"
                     }
                 }
-            } catch {
-                print(" Error: \(error)")
-            }
-        }
-    }
-    
-    func printUnsortedBySource(client: HTTPClient) async throws {
-        let sources = try await loadSources().get()
-        for source in sources.filter(\.isEnabled) {
-            print(source.name, terminator: " ->")
-            
-            do {
-                let storage = source.makeStorage(client: client)
-                let list = try await storage.listBlocks().get()
                 
-                if list.isEmpty {
-                    print(" None")
+                if printSources {
+                    for try await (source, result) in group {
+                        sourcesLoaded.append(source)
+                        progressBar?.activity.title = progressBarTitle()
+                        progressBar?.activity.currentProgress = Double(sourcesLoaded.count) / Double(sources.count)
+                        
+                        progressBar?.stop()
+                        
+                        switch result {
+                        case .success(let set):
+                            terminal.print("\(source):")
+                            for block in set.sorted(by: { $0.description < $1.description }) {
+                                terminal.print("    " + block.description)
+                            }
+                        case .failure(let error):
+                            errors.append((source, error))
+                            
+                            let message = switch error {
+                            case .unable: "unknown error (unable)"
+                            }
+                            
+                            terminal.print("\(source):")
+                            
+                            if silent {
+                                terminal.print("     failed to load blocks from \(source): \(message)")
+                            } else {
+                                terminal.error("     failed to load blocks from \(source): \(message)")
+                            }
+                        }
+                        
+                        progressBar = !silent ? terminal.progressBar(title: progressBarTitle(), targetQueue: .main) : nil
+                        progressBar?.activity.currentProgress = Double(sourcesLoaded.count) / Double(sources.count)
+                        progressBar?.start()
+                    }
+                    
+                    if !errors.isEmpty {
+                        progressBar?.fail()
+                    } else if verbose {
+                        progressBar?.succeed()
+                    } else {
+                        progressBar?.stop()
+                    }
                 } else {
-                    print()
-                    for block in list {
-                        print("    " + block.description)
+                    var list: [String] = []
+                    
+                    for try await (source, result) in group {
+                        sourcesLoaded.append(source)
+                        progressBar?.activity.title = progressBarTitle()
+                        progressBar?.activity.currentProgress = Double(sourcesLoaded.count) / Double(sources.count)
+                        
+                        switch result {
+                        case .success(let set): list += set.map(\.description)
+                        case .failure(let error): errors.append((source, error))
+                        }
+                    }
+                    
+                    progressBar?.stop()
+                    var last: String? = nil
+                    for blockID in list.sorted() {
+                        guard blockID != last else { continue }
+                        terminal.print(blockID)
+                        last = blockID
+                    }
+                    
+                    if errors.isEmpty {
+                        if verbose { progressBar?.succeed() }
+                    } else {
+                        for (source, error) in errors {
+                            let message = switch error {
+                            case .unable: "unknown error (unable)"
+                            }
+                            
+                            if silent {
+                                terminal.print("failed to load blocks from \(source): \(message)")
+                            } else {
+                                terminal.error("failed to load blocks from \(source): \(message)")
+                            }
+                        }
+                        progressBar?.fail()
                     }
                 }
-            } catch {
-                print(" Error: \(error)")
             }
+        } catch {
+            progressBar?.fail()
+            throw error
         }
-    }
-}
-
-enum CustomError: String, Error, CustomStringConvertible {
-    case lol = "custom error message"
-    
-    var description: String {
-        self.rawValue
     }
 }

@@ -12,7 +12,8 @@ public struct ZeneaSourcesRemove: AsyncParsableCommand {
         shouldDisplay: true,
         subcommands: [],
         defaultSubcommand: nil,
-        helpNames: nil
+        helpNames: nil,
+        aliases: []
     )
     
     @Argument var source: String

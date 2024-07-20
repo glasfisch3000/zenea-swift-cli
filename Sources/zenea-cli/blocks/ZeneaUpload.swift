@@ -17,7 +17,8 @@ public struct ZeneaUpload: AsyncParsableCommand {
         shouldDisplay: true,
         subcommands: [],
         defaultSubcommand: nil,
-        helpNames: nil
+        helpNames: nil,
+        aliases: []
     )
     
     @ArgumentParser.Flag(name: [.long]) public var debug: Bool = false

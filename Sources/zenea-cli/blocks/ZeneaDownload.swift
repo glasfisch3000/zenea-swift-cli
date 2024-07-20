@@ -14,7 +14,8 @@ public struct ZeneaDownload: AsyncParsableCommand {
         shouldDisplay: true,
         subcommands: [],
         defaultSubcommand: nil,
-        helpNames: nil
+        helpNames: nil,
+        aliases: []
     )
     
     @ArgumentParser.Argument public var blockID: Block.ID

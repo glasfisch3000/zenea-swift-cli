@@ -10,14 +10,15 @@ public struct ZeneaSync: AsyncParsableCommand {
         abstract: "Synchronise Zenea blocks between block sources.",
         usage: nil,
         discussion: "",
-        version: "1.0.0",
+        version: "2.0.0",
         shouldDisplay: true,
         subcommands: [],
         defaultSubcommand: nil,
-        helpNames: nil
+        helpNames: nil,
+        aliases: []
     )
     
-    @Option(name: [.customShort("s"), .long]) public var source: String?
+    @Option(name: [.customShort("S"), .long]) public var source: String?
     
     @ArgumentParser.Argument public var blockID: Block.ID
     @ArgumentParser.Argument public var destination: String

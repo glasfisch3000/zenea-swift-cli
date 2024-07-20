@@ -13,7 +13,8 @@ public struct ZeneaPut: AsyncParsableCommand {
         shouldDisplay: true,
         subcommands: [],
         defaultSubcommand: nil,
-        helpNames: nil
+        helpNames: nil,
+        aliases: []
     )
     
     @Option(name: .shortAndLong) public var format: Block.DataFormat = .raw
