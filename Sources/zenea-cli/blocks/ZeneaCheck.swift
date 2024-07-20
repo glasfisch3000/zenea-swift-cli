@@ -11,7 +11,7 @@ public struct ZeneaCheck: AsyncParsableCommand {
         abstract: "Check availability of Zenea blocks.",
         usage: nil,
         discussion: "",
-        version: "1.0.0",
+        version: "2.0.0",
         shouldDisplay: true,
         subcommands: [],
         defaultSubcommand: nil,
