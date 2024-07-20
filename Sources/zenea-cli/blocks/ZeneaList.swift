@@ -5,28 +5,6 @@ import ConsoleKit
 import Zenea
 
 public struct ZeneaList: AsyncParsableCommand {
-    public enum DebugOutputMode: EnumerableFlag, Hashable, Sendable, Codable {
-        case silent
-        case normal
-        case verbose
-        
-        public static func name(for value: ZeneaList.DebugOutputMode) -> NameSpecification {
-            switch value {
-            case .silent: .long
-            case .normal: .customLong("debug")
-            case .verbose: [.short, .long]
-            }
-        }
-        
-        public static func help(for value: ZeneaList.DebugOutputMode) -> ArgumentHelp? {
-            switch value {
-            case .silent: "Disable debug output."
-            case .normal: "Normal debug output mode."
-            case .verbose: "Enable verbose debug output."
-            }
-        }
-    }
-    
     public init() {}
     
     public static var configuration: CommandConfiguration = .init(
@@ -48,7 +26,7 @@ public struct ZeneaList: AsyncParsableCommand {
     
     public mutating func run() async throws {
         let client = HTTPClient(eventLoopGroupProvider: .singleton)
-        defer { try? client.shutdown().wait() }
+        defer { try? client.syncShutdown() }
         
         try await printBlocks(client: client)
     }
