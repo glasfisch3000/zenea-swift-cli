@@ -50,15 +50,3 @@ public class BlockFetchOperation: AsyncSequence {
         try? client.shutdown().wait()
     }
 }
-
-public enum FetchError: Error, CustomStringConvertible {
-    case unableToEncode
-    case notFound(_ id: Block.ID)
-    
-    public var description: String {
-        switch self {
-        case .unableToEncode: "Unable to encode block data."
-        case .notFound(let id): "Unable to get block with ID \(id.description)."
-        }
-    }
-}

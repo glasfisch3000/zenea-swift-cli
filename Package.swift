@@ -15,7 +15,7 @@ let package = Package(
         .package(url: "https://github.com/apple/swift-argument-parser.git", from: "1.5.0"),
         .package(url: "https://github.com/swift-server/async-http-client.git", from: "1.21.1"),
         .package(url: "https://github.com/apple/swift-nio.git", from: "2.68.0"),
-        .package(url: "https://github.com/glasfisch3000/console-kit.git", from: "4.14.3"),
+        .package(url: "https://github.com/glasfisch3000/console-kit.git", revision: "a4b086d"),
         .package(url: "https://github.com/zenea-project/zenea-swift.git", from: "3.1.0"),
         .package(url: "https://github.com/zenea-project/zenea-swift-files.git", from: "1.2.0"),
         .package(url: "https://github.com/zenea-project/zenea-swift-http.git", from: "1.1.0"),

@@ -22,7 +22,7 @@ public struct ZeneaList: AsyncParsableCommand {
     
     @ArgumentParser.Flag(name: [.customShort("s"), .customLong("print-sources")], help: "Show the lists for each block source.") public var printSources = false
     
-    @ArgumentParser.Flag(exclusivity: .chooseLast) var debugOutputMode: DebugOutputMode = .normal
+    @ArgumentParser.Flag(exclusivity: .chooseLast) public var debugOutputMode: DebugOutputMode = .normal
     
     public mutating func run() async throws {
         let client = HTTPClient(eventLoopGroupProvider: .singleton)
@@ -31,7 +31,7 @@ public struct ZeneaList: AsyncParsableCommand {
         try await printBlocks(client: client)
     }
     
-    func printBlocks(client: HTTPClient) async throws {
+    public func printBlocks(client: HTTPClient) async throws {
         let silent = debugOutputMode == .silent
         let verbose = debugOutputMode == .verbose
         

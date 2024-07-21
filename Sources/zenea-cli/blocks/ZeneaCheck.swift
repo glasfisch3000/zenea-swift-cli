@@ -19,8 +19,8 @@ public struct ZeneaCheck: AsyncParsableCommand {
         aliases: [] 
     )
     
-    @ArgumentParser.Option(name: [.customShort("S"), .long]) var source: String?
-    @ArgumentParser.Flag(exclusivity: .chooseLast) var debugOutputMode: DebugOutputMode = .normal
+    @ArgumentParser.Option(name: [.customShort("S"), .long]) public var source: String?
+    @ArgumentParser.Flag(exclusivity: .chooseLast) public var debugOutputMode: DebugOutputMode = .normal
     
     @ArgumentParser.Argument public var blockID: Block.ID
     
@@ -43,51 +43,48 @@ public struct ZeneaCheck: AsyncParsableCommand {
         var bar = !silent ? terminal.loadingBar(title: "loading sources", targetQueue: .main) : nil
         bar?.start()
         
-        let storage = switch await loadSources() {
-        case .success(let sources):
-            if let storage = sources
-                .first(where: { $0.name == source })?
-                .makeStorage(client: client) {
-                storage
+        do {
+            let (source, storage) = switch await loadSources() {
+            case .success(let sources):
+                if let source = sources.first(where: { $0.name == source }) {
+                    (source, source.makeStorage(client: client))
+                } else {
+                    throw CheckError.sourceNotFound(source)
+                }
+            case .failure(let error): throw CheckError.unableToLoadSources(error)
+            }
+            
+            if verbose {
+                bar?.succeed()
+                
+                bar = !silent ? terminal.loadingBar(title: "checking source \(source.name)", targetQueue: .main) : nil
+                bar?.start()
             } else {
-                bar?.fail()
-                throw CheckError.sourceNotFound(source)
+                bar?.activity.title = "checking source \(source.name)"
             }
-        case .failure(let error):
-            bar?.fail()
-            throw error
-        }
-        
-        if verbose {
-            bar?.succeed()
             
-            bar = !silent ? terminal.loadingBar(title: "checking source \(source)", targetQueue: .main) : nil
-            bar?.start()
-        } else {
-            bar?.activity.title = "checking source \(source)"
-        }
-        
-        let result = await storage.checkBlock(id: blockID)
-        bar?.stop()
-        
-        switch result {
-        case .success(true):
-            if verbose { bar?.succeed() }
-            terminal.print("available")
-        case .success(false):
-            if verbose { bar?.succeed() }
-            terminal.print("not available")
-        case .failure(let error):
-            bar?.fail()
+            let result = await storage.checkBlock(id: blockID)
+            bar?.stop()
             
-            let message = switch error {
-            case .unable: "unknown error (unable)"
+            switch result {
+            case .success(true):
+                if verbose { bar?.succeed() }
+                terminal.print("available")
+            case .success(false):
+                if verbose { bar?.succeed() }
+                terminal.print("not available")
+            case .failure(let error):
+                throw switch error {
+                case .unable: CheckError.unable
+                }
             }
+        } catch {
+            bar?.fail()
             
             if silent {
-                terminal.print("failed to check block at \(source): \(message)")
+                terminal.print("failed to check block at \(source): \((error as CustomStringConvertible).description)")
             } else {
-                terminal.error("failed to check block at \(source): \(message)")
+                terminal.error("failed to check block at \(source): \((error as CustomStringConvertible).description)")
             }
             throw error
         }
@@ -104,8 +101,15 @@ public struct ZeneaCheck: AsyncParsableCommand {
         
         let sources = switch await loadSources() {
         case .success(let sources): sources.filter(\.isEnabled).map { ($0.name, $0.makeStorage(client: client)) }
-        case .failure(let error):
+        case .failure(let error): 
+            let error = CheckError.unableToLoadSources(error)
             loadingBar?.fail()
+            
+            if silent {
+                terminal.print("failed to check block: \(error.description)")
+            } else {
+                terminal.error("failed to check block: \(error.description)")
+            }
             throw error
         }
         
@@ -168,7 +172,14 @@ public struct ZeneaCheck: AsyncParsableCommand {
                     progressBar?.stop()
                 }
             } catch {
+                let error = CheckError.internalError
                 progressBar?.fail()
+                
+                if silent {
+                    terminal.print("failed to check block: \(error.description)")
+                } else {
+                    terminal.error("failed to check block: \(error.description)")
+                }
                 throw error
             }
         }
@@ -177,11 +188,17 @@ public struct ZeneaCheck: AsyncParsableCommand {
 
 extension ZeneaCheck {
     public enum CheckError: Error, CustomStringConvertible {
+        case unableToLoadSources(LoadSourcesError)
         case sourceNotFound(String)
+        case unable
+        case internalError
         
         public var description: String {
             switch self {
-            case .sourceNotFound(let string): "Unable to locate source with name \"\(string)\""
+            case .unableToLoadSources(let error): "unable to load sources (\(error.description))"
+            case .sourceNotFound(let string): "no source with name \"\(string)\""
+            case .unable: "unknown error (unable)"
+            case .internalError: "unknown error (internal error)"
             }
         }
     }
